@@ -1,12 +1,14 @@
 <a id="readme-top"></a>
 [![Discourse Topics][discourse-shield]][discourse-url]
-![Issues][issues-shield]
-![Contributor Shield][contributor-shield]
+[![Issues][issues-shield]][issues-url]
+[![Contributor Shield][contributor-shield]][contributors-url]
 
 [discourse-shield]: https://img.shields.io/discourse/topics?server=https%3A%2F%2Fdeveloper.sailpoint.com%2Fdiscuss&link=https%3A%2F%2Fdeveloper.sailpoint.com%2Fdiscuss%2Fc%2Fcolab%2Fcolab-workflows%2F60
 [discourse-url]: https://developer.sailpoint.com/discuss/c/colab/colab-workflows/60
 [issues-shield]:https://img.shields.io/github/issues/sailpoint-oss/colab-workflows?label=Issues
+[issues-url]:https://github.com/sailpoint-oss/colab-workflows/issues
 [contributor-shield]:https://img.shields.io/github/contributors/sailpoint-oss/colab-workflows?label=Contributors
+[contributors-url]:https://github.com/sailpoint-oss/colab-workflows/graphs/contributors
 
 <!-- PROJECT LOGO -->
 <br />

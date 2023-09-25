@@ -18,7 +18,10 @@
   <h3 align="center">Developer Community CoLab - Workflows</h3>
 
   <p align="center">
-    <a href="https://developer.sailpoint.com/discuss/c/colab/colab-workflows/60"><strong>Explore Workflows in the CoLab »</strong></a>
+    <a href="https://developer.sailpoint.com/discuss/c/colab/colab-workflows/60"><strong>Explore all Workflows in the CoLab »</strong></a>
+  </p>
+  <p align="center">
+    <a href="https://developer.sailpoint.com/discuss/t/about-the-sailpoint-developer-community-colab/11230"><strong>New to the CoLab? Click here »</strong></a>
   </p>
 </div>
 

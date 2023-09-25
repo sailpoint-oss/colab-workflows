@@ -10,20 +10,11 @@
 [contributor-shield]:https://img.shields.io/github/contributors/sailpoint-oss/colab-workflows?label=Contributors
 [contributors-url]:https://github.com/sailpoint-oss/colab-workflows/graphs/contributors
 
-<!-- PROJECT LOGO -->
-<br />
-<div align="center">
-  <img src="https://avatars.githubusercontent.com/u/63106368?s=200&v=4" alt="Logo" width="80" height="80">
+# Developer Community CoLab - Workflows
 
-  <h3 align="center">Developer Community CoLab - Workflows</h3>
+[Explore all Workflows in the CoLab »](https://developer.sailpoint.com/discuss/c/colab/colab-workflows/60)
 
-  <p align="center">
-    <a href="https://developer.sailpoint.com/discuss/c/colab/colab-workflows/60"><strong>Explore all Workflows in the CoLab »</strong></a>
-  </p>
-  <p align="center">
-    <a href="https://developer.sailpoint.com/discuss/t/about-the-sailpoint-developer-community-colab/11230"><strong>New to the CoLab? Click here »</strong></a>
-  </p>
-</div>
+[New to the CoLab? Click here »](https://developer.sailpoint.com/discuss/t/about-the-sailpoint-developer-community-colab/11230)
 
 <!-- CONTRIBUTING -->
 ## Contributing

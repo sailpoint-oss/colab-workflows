@@ -1,0 +1,40 @@
+{
+	"name": "Access Request Preapproval",
+	"description": "Receive and respond to the access request preapproval event trigger.  This workflow does preliminary processing on every access request to automatically determine if it should move on to the next approver in the chain or if it should fail immediately.",
+	"modified": "2023-04-13T16:30:07.903067305Z",
+	"definition": {
+		"start": "HTTP Request",
+		"steps": {
+			"HTTP Request": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": null,
+					"jsonRequestBody": {
+						"output": {
+							"approved": true,
+							"approver": "Workflow",
+							"comment": "This access has passed workflow approval."
+						},
+						"secret": "{{$.trigger._metadata.secret}}"
+					},
+					"method": "post",
+					"requestContentType": "json",
+					"url.$": "$.trigger._metadata.callbackURL"
+				},
+				"nextStep": "success",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"success": {
+				"type": "success"
+			}
+		}
+	},
+	"trigger": {
+		"type": "EXTERNAL",
+		"attributes": {
+			"clientId": "862aa98b-f39b-490c-97af-49d23ad18102",
+			"url": "/beta/workflows/execute/external/a0e1c956-556c-4c2f-9c19-82ae9b71e1dc"
+		}
+	}
+}

@@ -1,0 +1,84 @@
+{
+	"name": "Update Access Request Preapproval Access Token",
+	"description": "",
+	"modified": "2023-04-18T14:10:36.785966514Z",
+	"definition": {
+		"start": "HTTP Request",
+		"steps": {
+			"HTTP Request": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": null,
+					"method": "post",
+					"url": "https://{tenant}.api.identitynow.com/oauth/token",
+					"urlParams": {
+						"client_id": "862aa98b-f39b-490c-xxx-xxxxx",
+						"client_secret": "6ebf9b15xxxxxx",
+						"grant_type": "client_credentials"
+					}
+				},
+				"nextStep": "HTTP Request 1",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 1": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonPatchRequestBody": [
+						{
+							"op": "replace",
+							"path": "/httpConfig/bearerTokenAuthConfig/bearerToken",
+							"value": "{{$.hTTPRequest.body.access_token}}"
+						}
+					],
+					"jsonRequestBody": {
+						"description": "",
+						"enabled": true,
+						"httpConfig": {
+							"basicAuthConfig": null,
+							"bearerTokenAuthConfig": {
+								"bearerToken": "{{$.hTTPRequest.body.access_token}}"
+							},
+							"httpAuthenticationType": "BEARER_TOKEN",
+							"httpDispatchMode": "ASYNC",
+							"url": "https://{tenant}.api.identitynow.com/beta/workflows/execute/external/{id}"
+						},
+						"name": "Workflow",
+						"responseDeadline": "PT1H",
+						"triggerId": "idn:access-request-pre-approval",
+						"triggerName": "Access Request Submitted",
+						"type": "HTTP"
+					},
+					"method": "patch",
+					"oAuthClientId": "1758c03fdbf64401876f69b6c6e2c7b7",
+					"oAuthClientSecret": "$.secrets.5919bcbf-8f1d-4d96-9747-63634446ff10",
+					"oAuthCredentialLocation": "oAuthInHeader",
+					"oAuthTokenUrl": "https://devrel.api.identitynow.com/oauth/token",
+					"requestContentType": "json-patch+json",
+					"url": "https://{tenant}.api.identitynow.com/beta/trigger-subscriptions/{id}"
+				},
+				"nextStep": "success",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"success": {
+				"type": "success"
+			}
+		}
+	},
+	"trigger": {
+		"type": "SCHEDULED",
+		"attributes": {
+			"cronString": "0 0 * * 0",
+			"frequency": "weekly",
+			"timeZone": "America/New_York",
+			"weeklyDays": [
+				"Sunday"
+			],
+			"weeklyTimes": [
+				"00:00"
+			]
+		}
+	}
+}

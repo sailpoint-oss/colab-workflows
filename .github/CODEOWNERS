@@ -1,3 +1,9 @@
 workflows/request-response-trigger @colin-mckibben-sp
 workflows/manage-service-now-ticket @iam-sharvari
 workflows/emergency-termination @iam-sharvari
+workflows/scheduled-full-source-aggregation-delta @iam-sharvari
+workflows/run-unoptomized-aggregation @iam-sharvari
+workflows/account-aggregation-failed-notification @iam-sharvari
+workflows/assign-roles-using-forms @iam-sharvari
+workflows/new-hire-additional-info @iam-sharvari
+

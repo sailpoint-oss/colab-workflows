@@ -1,0 +1,93 @@
+{
+	"name": "Reassign Sources",
+	"description": "Reassign all sources belonging to one identity to a new identity.",
+	"definition": {
+		"start": "HTTP Request",
+		"steps": {
+			"End Step — Success": {
+				"type": "success"
+			},
+			"End Step — Success 1": {
+				"type": "success"
+			},
+			"HTTP Request": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"method": "get",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthCredentialLocation": "oAuthInHeader",
+					"oAuthTokenUrl": "https://{tenant}.api.identitynow.com/oauth/token",
+					"url": "https://{tenant}.api.identitynow.com/v3/sources?filters=owner.id%20eq%20%22{{$.trigger.previousOwnerId}}%22&limit=1"
+				},
+				"description": "Gets a single source owned by the previous identity.",
+				"nextStep": "Verify Data Type",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 1": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonPatchRequestBody": [
+						{
+							"op": "replace",
+							"path": "/owner",
+							"value": {
+								"id": "{{$.trigger.newOwnerId}}"
+							}
+						}
+					],
+					"method": "patch",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthCredentialLocation": null,
+					"oAuthTokenUrl": "https://{tenant}.api.identitynow.com/oauth/token",
+					"requestContentType": "json-patch+json",
+					"url": "https://{tenant}.api.identitynow.com/v3/sources/{{$.hTTPRequest.body[0].id}}"
+				},
+				"description": "Update the source owner to the new owner.",
+				"nextStep": "HTTP Request 2",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 2": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonRequestBody.$": "$.trigger",
+					"method": "post",
+					"oAuthClientId": "{Client ID of this workflow's External Trigger}",
+					"oAuthClientSecret": "{Client Secret of this workflow's External Trigger}",
+					"oAuthTokenUrl": "https://{tenant}.api.identitynow.com/oauth/token",
+					"requestContentType": "json",
+					"url": "{URL of this workflow's External Trigger}"
+				},
+				"description": "Invoke this workflow again to reassign any remaining sources.",
+				"nextStep": "End Step — Success 1",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Verify Data Type": {
+				"choiceList": [
+					{
+						"comparator": "IsPresent",
+						"nextStep": "HTTP Request 1",
+						"variableA.$": "$.hTTPRequest.body[0]"
+					}
+				],
+				"defaultStep": "End Step — Success",
+				"type": "choice"
+			}
+		}
+	},
+	"trigger": {
+		"type": "EXTERNAL",
+		"attributes": {
+			"clientId": "",
+			"description": "Must use the following payload when invoking this trigger:\n{\n  \"previousOwnerId\": \"{identity ID}\",\n  \"newOwnerId\": \"{identity ID}\"\n}",
+			"url": ""
+		}
+	}
+}

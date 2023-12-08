@@ -1,0 +1,188 @@
+{
+	"name": "Object Owner Reassignment",
+	"description": "The main entry point for reassigning object ownership.",
+	"definition": {
+		"start": "Get Identity",
+		"steps": {
+			"End Step — Success": {
+				"type": "success"
+			},
+			"Form": {
+				"actionId": "sp:forms",
+				"attributes": {
+					"deadline": "7d",
+					"formDefinitionId": "d4614696-3306-4ff6-b161-26431a083fd1",
+					"inputForForm_previousowner.$": "$.trigger.identity.name",
+					"notificationBody": "One of your direct reports, {{$.trigger.identity.name}}, has the left the company.  Please open this form to reassign this person's items to a new owner.",
+					"notificationSubject": "A direct report has left the company.",
+					"recipient.$": "$.getIdentity.managerRef.id",
+					"reminder": "4d",
+					"reminderBody": "One of your direct reports, {{$.trigger.identity.name}}, has the left the company.  Please open this form to reassign this person's items to a new owner."
+				},
+				"description": "Send a reassignment form to the identity's manager.  This will tell the workflow which identity to reassign the objects to.",
+				"nextStep": "HTTP Request",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Get Identity": {
+				"actionId": "sp:get-identity",
+				"attributes": {
+					"id.$": "$.trigger.identity.id"
+				},
+				"description": "Get the identity details of the terminated identity.",
+				"nextStep": "Form",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonRequestBody": {
+						"newOwnerId": "{{$.form.formData.newOwner}}",
+						"previousOwnerId": "{{$.trigger.identity.id}}"
+					},
+					"method": "post",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthTokenUrl": "https://{tenant}.api.identitynow.com/oauth/token",
+					"requestContentType": "json",
+					"url": "https://{tenant}.api.identitynow.com/beta/workflows/execute/external/c79e0079-562c-4df5-aa73-60a9e25c916d"
+				},
+				"description": "Reassign Sources",
+				"nextStep": "HTTP Request 1",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 1": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonRequestBody": {
+						"newOwnerId": "{{$.form.formData.newOwner}}",
+						"previousOwnerId": "{{$.trigger.identity.id}}"
+					},
+					"method": "post",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthTokenUrl": "https://{tenant}.api.identitynow.com/oauth/token",
+					"requestContentType": "json",
+					"url": "https://{tenant}.api.identitynow.com/beta/workflows/execute/external/c79e0079-562c-4df5-aa73-60a9e25c916d"
+				},
+				"description": "Reassign roles",
+				"nextStep": "HTTP Request 2",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 2": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonRequestBody": {
+						"newOwnerId": "{{$.form.formData.newOwner}}",
+						"previousOwnerId": "{{$.trigger.identity.id}}"
+					},
+					"method": "post",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthTokenUrl": "https://{tenant}.api.identitynow.com/oauth/token",
+					"requestContentType": "json",
+					"url": "https://{tenant}.api.identitynow.com/beta/workflows/execute/external/c79e0079-562c-4df5-aa73-60a9e25c916d"
+				},
+				"description": "Reassign access profiles",
+				"nextStep": "HTTP Request 3",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 3": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonRequestBody": {
+						"newOwnerId": "{{$.form.formData.newOwner}}",
+						"previousOwnerId": "{{$.trigger.identity.id}}"
+					},
+					"method": "post",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthTokenUrl": "https://{tenant}.api.identitynow.com/oauth/token",
+					"requestContentType": "json",
+					"url": ""
+				},
+				"description": "Reassign entitlements",
+				"nextStep": "HTTP Request 4",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 4": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonRequestBody": {
+						"newOwnerId": "{{$.form.formData.newOwner}}",
+						"offset": 0,
+						"previousOwnerId": "{{$.trigger.identity.id}}"
+					},
+					"method": "post",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthTokenUrl": "https://{tenant}.api.identitynow.com/oauth/token",
+					"requestContentType": "json",
+					"url": ""
+				},
+				"description": "Reassign identity profiles.\n\nThis is for the first 100 identity profiles. If you need to process more than 100 identity profiles, copy this action and increment the offset by 100.",
+				"nextStep": "HTTP Request 5",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 5": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonRequestBody": {
+						"newOwnerId": "{{$.form.formData.newOwner}}",
+						"offset": 0,
+						"previousOwnerId": "{{$.trigger.identity.id}}"
+					},
+					"method": "post",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthTokenUrl": "https://{tenant}.api.identitynow.com/oauth/token",
+					"requestContentType": "json",
+					"url": ""
+				},
+				"description": "Reassign governance groups.\n\nThis is for the first 100 governance groups. If you need to process more than 100 governance groups, copy this action and increment the offset by 100.",
+				"nextStep": "HTTP Request 6",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 6": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonRequestBody": {
+						"newOwnerId": "{{$.form.formData.newOwner}}",
+						"previousOwnerId": "{{$.trigger.identity.id}}"
+					},
+					"method": "post",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthTokenUrl": "https://{tenant}.api.identitynow.com/oauth/token",
+					"requestContentType": "json",
+					"url": ""
+				},
+				"description": "Reassign workflows",
+				"nextStep": "End Step — Success",
+				"type": "action",
+				"versionNumber": 2
+			}
+		}
+	},
+	"trigger": {
+		"type": "EVENT",
+		"attributes": {
+			"filter.$": "$.changes[?(@.attribute == \"cloudLifecycleState\" && @.newValue == \"terminated\")]",
+			"id": "idn:identity-attributes-changed"
+		}
+	}
+}

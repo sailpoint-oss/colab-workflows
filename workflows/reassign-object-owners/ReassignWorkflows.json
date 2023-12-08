@@ -1,0 +1,90 @@
+{
+	"name": "Reassign Workflows",
+	"description": "Reassign all workflows belonging to one identity to another identity",
+	"definition": {
+		"start": "HTTP Request",
+		"steps": {
+			"End Step — Success 1": {
+				"type": "success"
+			},
+			"HTTP Request": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"method": "get",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthTokenUrl": "https://{tenant}.api.identitynow.com/oauth/token",
+					"url": "https://{tenant}.api.identitynow.com/beta/workflows"
+				},
+				"nextStep": "Loop",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Loop": {
+				"actionId": "sp:loop:iterator",
+				"attributes": {
+					"context.$": "$.trigger",
+					"input.$": "$.hTTPRequest.body",
+					"start": "Compare Strings",
+					"steps": {
+						"Compare Strings": {
+							"choiceList": [
+								{
+									"comparator": "StringEquals",
+									"nextStep": "HTTP Request 1",
+									"variableA.$": "$.loop.loopInput.owner.id",
+									"variableB.$": "$.loop.context.previousOwnerId"
+								}
+							],
+							"defaultStep": "End Step — Success",
+							"type": "choice"
+						},
+						"End Step — Success": {
+							"type": "success"
+						},
+						"End Step — Success 2": {
+							"type": "success"
+						},
+						"HTTP Request 1": {
+							"actionId": "sp:http",
+							"attributes": {
+								"authenticationType": "OAuth",
+								"jsonPatchRequestBody": [
+									{
+										"op": "replace",
+										"path": "/owner",
+										"value": {
+											"id": "{{$.loop.context.newOwnerId}}",
+											"type": "IDENTITY"
+										}
+									}
+								],
+								"method": "patch",
+								"oAuthClientId": "",
+								"oAuthClientSecret": "",
+								"oAuthTokenUrl": "https://{tenant}.api.identitynow.com/oauth/token",
+								"requestContentType": "json-patch+json",
+								"url": "https://{tenant}.api.identitynow.com/beta/workflows/{{$.loop.loopInput.id}}"
+							},
+							"nextStep": "End Step — Success 2",
+							"type": "action",
+							"versionNumber": 2
+						}
+					}
+				},
+				"nextStep": "End Step — Success 1",
+				"type": "action",
+				"versionNumber": 1
+			}
+		}
+	},
+	"trigger": {
+		"type": "EXTERNAL",
+		"attributes": {
+			"clientId": "",
+			"description": "Accepts the following input\n\n{\n  \"previousOwnerId\": \"{identity ID}\",\n  \"newOwnerId\": \"{identity ID}\n}",
+			"url": ""
+		}
+	}
+}

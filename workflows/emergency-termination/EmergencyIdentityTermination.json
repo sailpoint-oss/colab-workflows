@@ -1,0 +1,134 @@
+{
+	"name": "Emergency Terminations",
+	"description": "Workflow to immediately disable the accounts of identities that are terminated by the Authoritative Source",
+	"definition": {
+		"start": "Compare Strings",
+		"steps": {
+			"Compare Strings": {
+				"choiceList": [
+					{
+						"comparator": "StringEquals",
+						"nextStep": "Get List of Identities",
+						"variableA.$": "$.trigger.action",
+						"variableB": "terminated"
+					}
+				],
+				"defaultStep": "End Step — Success 1",
+				"description": "Verifies that the change in cloudLifecycleState is to \"terminated\".",
+				"type": "choice"
+			},
+			"End Step — Success": {
+				"description": "Finishes the workflow in a Success state.",
+				"type": "success"
+			},
+			"End Step — Success 1": {
+				"description": "Terminates the workflow when the comparison operator indicates the user was changed to any lifecycle state other than \"terminated.\"",
+				"type": "success"
+			},
+			"Get Access": {
+				"actionId": "sp:access:get",
+				"attributes": {
+					"accessprofiles": true,
+					"entitlements": false,
+					"getAccessBy": "specificIdentity",
+					"identityToReturn.$": "$.getIdentity.id",
+					"roles": false
+				},
+				"description": "Get User access",
+				"nextStep": "Get Accounts",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Get Accounts": {
+				"actionId": "sp:get-accounts",
+				"attributes": {
+					"getAccountsBy": "specificIdentity",
+					"identity.$": "$.getIdentity.id"
+				},
+				"description": "Retrieves the identity's current list of accounts.",
+				"nextStep": "Manage Access",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Get Identity": {
+				"actionId": "sp:get-identity",
+				"attributes": {
+					"id.$": "$.getListOfIdentities.identities[0].id"
+				},
+				"description": "Retrieves available details about the identity.",
+				"nextStep": "Get Access",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Get Identity 1": {
+				"actionId": "sp:get-identity",
+				"attributes": {
+					"id.$": "$.getIdentity.managerRef.id"
+				},
+				"description": "This node is used to gather information about the user's manager to populate their email in the recipient field.",
+				"nextStep": "Send Email 1",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Get List of Identities": {
+				"actionId": "sp:get-identities",
+				"attributes": {
+					"inputQuery": "attributes.identificationNumber.exact:{{$.trigger.employee_id}}",
+					"searchBy": "searchQuery"
+				},
+				"description": "Find the identities to be terminated",
+				"nextStep": "Get Identity",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Manage Access": {
+				"actionId": "sp:access:manage",
+				"attributes": {
+					"comments": "Emergency Termination of user in Authoritative Source",
+					"removeIdentity.$": "$.getIdentity.id",
+					"requestType": "REVOKE_ACCESS",
+					"requestedItems.$": "$.getAccess.accessItems"
+				},
+				"description": "Remove user access",
+				"nextStep": "Manage Accounts",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Manage Accounts": {
+				"actionId": "sp:manage-account",
+				"attributes": {
+					"accountIds.$": "$.getAccounts.accounts[?(@.sourceId=='6edbfdf26c4640cda9289ba5125b7de6')].id",
+					"operation": "disable"
+				},
+				"description": "Disable the accounts returned by the Get Accounts step or filter a particular account to disable.",
+				"nextStep": "Get Identity 1",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Send Email 1": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Dear ${manager}<br><p>This email is to notify you that user <b style=\"\">${displayName}</b> is no longer active in Identity Now system. Their access to Active Directory system has been disabled successfully.</p><br/><br/>Thank you,<br>IAM Team",
+					"context": {
+						"displayName.$": "$.getIdentity.attributes.displayName",
+						"manager.$": "$.getIdentity1.attributes.firstname"
+					},
+					"recipientEmailList.$": "$.getIdentity1.attributes.email",
+					"subject": "Employee Leaving"
+				},
+				"description": "Notifies the users manager that the user is now inactive. This step can also be configured to notify security admins using a distribution list.",
+				"nextStep": "End Step — Success",
+				"type": "action",
+				"versionNumber": 2
+			}
+		}
+	},
+	"trigger": {
+		"type": "EXTERNAL",
+		"attributes": {
+			"clientId": "46e0a060-9b52-4c6a-bfaa-620e91a08629",
+			"description": "External Trigger to be called from SAP",
+			"url": "https://tenant-name.api.identitynow.com/beta/workflows/execute/external/0acb99ca-974f-46c3-ac10-b61efc1b4ca6"
+		}
+	}
+}

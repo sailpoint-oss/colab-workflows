@@ -1,0 +1,89 @@
+{
+	"name": "Run Unoptimized Aggregation",
+	"description": "Run Unoptimized Aggregation",
+	"definition": {
+		"start": "HTTP Request",
+		"steps": {
+			"Compare Numbers": {
+				"choiceList": [
+					{
+						"comparator": "NumericEquals",
+						"nextStep": "Send Email",
+						"variableA.$": "$.hTTPRequest.statusCode",
+						"variableB": 200
+					}
+				],
+				"defaultStep": "Send Email 1",
+				"type": "choice"
+			},
+			"HTTP Request": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"formRequestBody": "disableOptimization:true",
+					"method": "post",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthCredentialLocation": "oAuthInHeader",
+					"oAuthTokenUrl": "https://tenant.api.identitynow-demo.com/oauth/token",
+					"requestContentType": "form",
+					"url": "https://tenant.api.identitynow-demo.com/cc/api/source/loadAccounts/XXXXX"
+				},
+				"description": "Run unoptimized aggregation",
+				"nextStep": "Compare Numbers",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Unoptimized Aggregation for Active Directory has been <b>completed.</b>.<br/>IAM Team",
+					"context": {},
+					"from": null,
+					"recipientEmailList": [
+						"sshah@sshah.com"
+					],
+					"subject": "Run Unoptimized Aggregation"
+				},
+				"description": "Run Unoptimized Aggregations",
+				"nextStep": "success",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email 1": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Unoptimized Aggregation for Active Directory has <b>Failed</b>.<br/>IAM Team",
+					"context": {},
+					"from": null,
+					"recipientEmailList": [
+						"sbharatiya@cybersolve.com"
+					],
+					"subject": "Run Unoptimized Aggregation"
+				},
+				"description": "Run Unoptimized Aggregation Failed",
+				"nextStep": "success",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"success": {
+				"description": "End",
+				"type": "success"
+			}
+		}
+	},
+	"trigger": {
+		"type": "SCHEDULED",
+		"attributes": {
+			"cronString": "0 15 * * 6",
+			"frequency": "weekly",
+			"timeZone": "US/Eastern",
+			"weeklyDays": [
+				"Saturday"
+			],
+			"weeklyTimes": [
+				"1969-12-31T20:30:00.000Z"
+			]
+		}
+	}
+}

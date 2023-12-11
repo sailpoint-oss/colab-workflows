@@ -1,0 +1,233 @@
+{
+	"name": "Manage Service Now Ticket with Workflows",
+	"description": "Manage Service Now Ticket with Workflows",
+	"definition": {
+		"start": "Get Identity",
+		"steps": {
+			"Compare Numbers": {
+				"choiceList": [
+					{
+						"comparator": "NumericEquals",
+						"nextStep": "Send Email",
+						"variableA.$": "$.manageServiceNowTicket.statusCode",
+						"variableB": 201
+					}
+				],
+				"defaultStep": "Send Email 3",
+				"description": "Check Manage Service Now Ticket action completed successfully",
+				"type": "choice"
+			},
+			"Compare Strings": {
+				"choiceList": [
+					{
+						"comparator": "StringEquals",
+						"nextStep": "Send Email 1",
+						"variableA.$": "$.manageServiceNowTicket1.body.result[?(@.task_effective_number=='{{$.manageServiceNowTicket.body.result.task_effective_number}}')].request_state",
+						"variableB": "closed_complete"
+					}
+				],
+				"defaultStep": "Send Email 2",
+				"description": null,
+				"type": "choice"
+			},
+			"Define Variable": {
+				"attributes": {
+					"variables": [
+						{
+							"name": "ticketDueDate",
+							"transforms": [
+								{
+									"id": "sp:transform:addTime:time",
+									"input": {
+										"length": 7,
+										"type": [
+											"string"
+										],
+										"unit": "days"
+									}
+								}
+							],
+							"variableA.$": "$.now()"
+						}
+					]
+				},
+				"description": "Due Date variable = 7 days from today",
+				"nextStep": "Define Variable 1",
+				"type": "Mutation"
+			},
+			"Define Variable 1": {
+				"attributes": {
+					"variables": [
+						{
+							"name": "dueDate",
+							"transforms": [
+								{
+									"id": "sp:transform:substring:string",
+									"input": {
+										"length": 10,
+										"start": null,
+										"type": [
+											"string"
+										]
+									}
+								}
+							],
+							"variableA.$": "$.defineVariable.ticketDueDate"
+						}
+					]
+				},
+				"description": "Due Date variable = 7 days from today",
+				"nextStep": "Manage ServiceNow Ticket",
+				"type": "Mutation"
+			},
+			"End Step — Success": {
+				"description": "Request Success",
+				"type": "success"
+			},
+			"End Step — Success 1": {
+				"type": "success"
+			},
+			"End Step — Success 2": {
+				"type": "success"
+			},
+			"Get Identity": {
+				"actionId": "sp:get-identity",
+				"attributes": {
+					"id.$": "$.trigger.attributes.manager.id"
+				},
+				"description": "Get User's Manager",
+				"nextStep": "Define Variable",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Manage ServiceNow Ticket": {
+				"actionId": "sp:snow",
+				"attributes": {
+					"action": "create",
+					"authenticationType": "basic",
+					"basicAuthPassword": "",
+					"basicAuthUserName": "admin",
+					"caller": "admin",
+					"customFields": "assignment_group:Hardware\ndue_date:{{$.defineVariable1.dueDate}}\ncomments:New Ticket for provisioning user Hardware",
+					"description": "Please provision Hardware for the user with Employee Number - {{$.trigger.attributes.identificationNumber}}",
+					"shortDescription": "New User {{$.trigger.identity.name}} created in Sailpoint IDN",
+					"urgency": "2",
+					"url": "https://tenant.service-now.com/api/now/v1/table/sc_request",
+					"watchlist": "admin"
+				},
+				"description": "Create Service Now Ticket",
+				"nextStep": "Wait",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Manage ServiceNow Ticket 1": {
+				"actionId": "sp:snow",
+				"attributes": {
+					"action": "get",
+					"authenticationType": "basic",
+					"basicAuthPassword": "",
+					"basicAuthUserName": "admin",
+					"ticket": "{{$.manageServiceNowTicket.body.result.task_effective_number}}",
+					"url": "https://tenant.service-now.com/api/now/v1/table/sc_request?sysparm_query="
+				},
+				"description": "Check Ticket Status",
+				"nextStep": "Compare Strings",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Send Email": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Hi,<br/><br/>\nService Now Ticket for user ${displayName} has been created successfully. \n<br/><br/>\nThe Ticket Number is ${ticketNumber}.\n<br/><br/>\nThanks,<br/>\nYour IAM Team",
+					"context": {
+						"displayName.$": "$.trigger.identity.name",
+						"ticketNumber.$": "$.manageServiceNowTicket.body.result.task_effective_number"
+					},
+					"recipientEmailList.$": "$.getIdentity.attributes.email",
+					"subject": "Service Now Ticket {{$.manageServiceNowTicket.body.result.task_effective_number}} Created"
+				},
+				"description": "Notify Manager about Service Now Ticket Creation",
+				"nextStep": "Wait 1",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email 1": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Service Now Ticket ${ticketNumber} for user ${displayName} is now Closed.\n<br/><br/>\nPlease note that Hardware provisioning for new user is now complete.\n<br/><br/>\nThanks,<br/>\nIAM Team",
+					"context": {
+						"displayName.$": "$.trigger.identity.name",
+						"ticketNumber.$": "$.manageServiceNowTicket.body.result.task_effective_number"
+					},
+					"recipientEmailList.$": "$.getIdentity.attributes.email",
+					"subject": "Service Now Ticket {{$.manageServiceNowTicket.body.result.task_effective_number}} Closed"
+				},
+				"description": "Notify Manager of Service Now Ticket Completetion",
+				"nextStep": "End Step — Success",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email 2": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Hi,<br/><br/>\nService Now Ticket ${ticketNumber} for user ${displayName} is ${status}.\n<br/><br/>\nPlease check with Hardware Team if provisioning is completed.<br/><br/>\nThanks,<br/>\nYour IAM Team",
+					"context": {
+						"displayName.$": "$.trigger.identity.name",
+						"status.$": "$.manageServiceNowTicket1.body.result[?(@.task_effective_number=='{{$.manageServiceNowTicket.body.result.task_effective_number}}')].request_state",
+						"ticketNumber.$": "$.manageServiceNowTicket.body.result.task_effective_number"
+					},
+					"recipientEmailList.$": "$.getIdentity.attributes.email",
+					"subject": "Service Now Ticket {{$.manageServiceNowTicket.body.result.task_effective_number}} Status"
+				},
+				"description": "Notify Manager about Service Now Ticket Status",
+				"nextStep": "End Step — Success 2",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email 3": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Hi,<br/><br/>\nService Now Ticket creation for user ${displayName} has failed. \n<br/><br/>\nPlease create provisioning request with Hardware Team from Service Now.\n<br/><br/>\nThanks,<br/>\nYour IAM Team",
+					"context": {
+						"displayName.$": "$.trigger.identity.name"
+					},
+					"recipientEmailList.$": "$.getIdentity.attributes.email",
+					"subject": "Service Now Ticket Creation Failure"
+				},
+				"description": "Notify Manager about Service Now Ticket Creation Failure",
+				"nextStep": "End Step — Success 1",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Wait": {
+				"actionId": "sp:sleep",
+				"attributes": {
+					"duration": "10m",
+					"type": "waitFor"
+				},
+				"description": "Wait for Service Now Ticket Creation",
+				"nextStep": "Compare Numbers",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Wait 1": {
+				"actionId": "sp:sleep",
+				"attributes": {
+					"duration": "7d",
+					"type": "waitFor"
+				},
+				"description": "Wait for a few days to check Ticket Status",
+				"nextStep": "Manage ServiceNow Ticket 1",
+				"type": "action",
+				"versionNumber": 1
+			}
+		}
+	},
+	"trigger": {
+		"type": "EVENT",
+		"attributes": {
+			"description": "New Identity Created in IDN",
+			"id": "idn:identity-created"
+		}
+	}
+}

@@ -1,0 +1,55 @@
+{
+	"name": "Account Aggregation Failed Notification",
+	"description": "Account Aggregation Failed Notification",
+	"definition": {
+		"start": "Compare Strings",
+		"steps": {
+			"Compare Strings": {
+				"choiceList": [
+					{
+						"comparator": "StringEquals",
+						"nextStep": "Send Email",
+						"variableA.$": "$.trigger.status",
+						"variableB": "Error"
+					}
+				],
+				"defaultStep": "End Step — Success 1",
+				"description": "Check if aggregation status equals failed",
+				"type": "choice"
+			},
+			"End Step — Success": {
+				"type": "success"
+			},
+			"End Step — Success 1": {
+				"description": "Aggregation Completed Successfully without any Errors",
+				"type": "success"
+			},
+			"Send Email": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Hi,<br/><br/>Account Aggregation for Source <b>${sourceName}</b> has <b>Failed</b>. <br/>Aggregation Start Time : ${startTime}<br/>Aggregation Completion Time ${completedTime}.<br/><br/>Thank you,<br/>IAM Team",
+					"context": {
+						"completedTime.$": "$.trigger.completed",
+						"sourceName.$": "$.trigger.source.name",
+						"startTime.$": "$.trigger.started"
+					},
+					"recipientEmailList": [
+						"sshah@sshah.com"
+					],
+					"subject": "ALERT: {{$.trigger.source.name}} source aggregation has Failed"
+				},
+				"description": "Notify the Source Admin of Source aggregation failure",
+				"nextStep": "End Step — Success",
+				"type": "action",
+				"versionNumber": 2
+			}
+		}
+	},
+	"trigger": {
+		"type": "EVENT",
+		"attributes": {
+			"filter.$": "$[?(@.source.name ==\"Active Directory\")]",
+			"id": "idn:account-aggregation-completed"
+		}
+	}
+}

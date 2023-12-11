@@ -1,0 +1,131 @@
+{
+	"name": "Full Source Aggregation",
+	"description": "Run a scheduled full source aggregation for a source enabled for delta aggregation",
+	"definition": {
+		"start": "HTTP Request",
+		"steps": {
+			"Compare Numbers": {
+				"choiceList": [
+					{
+						"comparator": "NumericEquals",
+						"nextStep": "HTTP Request 1",
+						"variableA.$": "$.hTTPRequest.statusCode",
+						"variableB": 200
+					}
+				],
+				"defaultStep": "End Step — Success",
+				"description": null,
+				"type": "choice"
+			},
+			"Compare Numbers 1": {
+				"choiceList": [
+					{
+						"comparator": "NumericEquals",
+						"nextStep": "HTTP Request 2",
+						"variableA.$": "$.hTTPRequest1.statusCode",
+						"variableB": 200
+					}
+				],
+				"defaultStep": "End Step — Success",
+				"description": null,
+				"type": "choice"
+			},
+			"Compare Numbers 2": {
+				"choiceList": [
+					{
+						"comparator": "NumericEquals",
+						"nextStep": "End Step — Success",
+						"variableA.$": "$.hTTPRequest2.statusCode",
+						"variableB": 200
+					}
+				],
+				"defaultStep": "End Step — Success",
+				"description": null,
+				"type": "choice"
+			},
+			"End Step — Success": {
+				"type": "success"
+			},
+			"HTTP Request": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonPatchRequestBody": [
+						{
+							"op": "replace",
+							"path": "/connectorAttributes/deltaAggregationEnabled",
+							"value": "false"
+						}
+					],
+					"method": "patch",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthCredentialLocation": "oAuthInHeader",
+					"oAuthTokenUrl": "https://tenant.api.identitynow-demo.com/oauth/token",
+					"requestContentType": "json-patch+json",
+					"url": "https://tenant.api.identitynow-demo.com/v3/sources/ef7ad4d0f07a46d6b62064cd3efa1abe"
+				},
+				"description": "Update the source configuration using REST API and set Delta aggregation flag to false",
+				"nextStep": "Compare Numbers",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 1": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonPatchRequestBody": null,
+					"method": "post",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthCredentialLocation": "oAuthInHeader",
+					"oAuthTokenUrl": "https://tenant.api.identitynow-demo.com/oauth/token",
+					"requestContentType": "json-patch+json",
+					"url": "https://tenant.api.identitynow-demo.com/cc/api/source/loadAccounts/XXXXX"
+				},
+				"description": "Trigger a Full Source Account Aggregation",
+				"nextStep": "Compare Numbers 1",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 2": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonPatchRequestBody": [
+						{
+							"op": "replace",
+							"path": "/connectorAttributes/deltaAggregationEnabled",
+							"value": "true"
+						}
+					],
+					"method": "patch",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthCredentialLocation": "oAuthInHeader",
+					"oAuthTokenUrl": "https://tenant.api.identitynow-demo.com/oauth/token",
+					"requestContentType": "json-patch+json",
+					"url": "https://tenant.api.identitynow-demo.com/v3/sources/ef7ad4d0f07a46d6b62064cd3efa1abe"
+				},
+				"description": "Update the source configuration using REST API and set Delta aggregation flag to true",
+				"nextStep": "Compare Numbers 2",
+				"type": "action",
+				"versionNumber": 2
+			}
+		}
+	},
+	"trigger": {
+		"type": "SCHEDULED",
+		"attributes": {
+			"cronString": "0 2 * * 6",
+			"frequency": "weekly",
+			"timeZone": "Asia/Kolkata",
+			"weeklyDays": [
+				"Saturday"
+			],
+			"weeklyTimes": [
+				"1969-12-31T20:30:00.000Z"
+			]
+		}
+	}
+}

@@ -1,0 +1,230 @@
+{
+	"name": "Manage Service Now Ticket with HTTP Request in Workflows",
+	"description": "Manage Service Now Ticket with HTTP Request in Workflows",
+	"definition": {
+		"start": "Get Identity",
+		"steps": {
+			"Compare Numbers": {
+				"choiceList": [
+					{
+						"comparator": "NumericEquals",
+						"nextStep": "Send Email",
+						"variableA.$": "$.hTTPRequest1.statusCode",
+						"variableB": 201
+					}
+				],
+				"defaultStep": "End Step — Failure",
+				"description": "Check if Status Code of HTTP Response is 201",
+				"type": "choice"
+			},
+			"Compare Strings": {
+				"choiceList": [
+					{
+						"comparator": "StringEquals",
+						"nextStep": "Send Email 1",
+						"variableA.$": "$.hTTPRequest3.body.result[0].state",
+						"variableB": "7"
+					}
+				],
+				"defaultStep": "End Step — Failure 1",
+				"description": "Check Incident State = 7 (Closed)",
+				"type": "choice"
+			},
+			"Define Variable": {
+				"attributes": {
+					"variables": [
+						{
+							"name": "dueDate",
+							"transforms": [
+								{
+									"id": "sp:transform:addTime:time",
+									"input": {
+										"length": 7,
+										"type": [
+											"string"
+										],
+										"unit": "days"
+									}
+								}
+							],
+							"variableA.$": "$.now()"
+						}
+					]
+				},
+				"description": "Due Date variable = 7 days from today",
+				"nextStep": "HTTP Request",
+				"type": "Mutation"
+			},
+			"End Step — Failure": {
+				"description": "HTTP Request for Incident Creation in Service Now failed",
+				"failureName": "HTTP Request Failed",
+				"type": "failure"
+			},
+			"End Step — Failure 1": {
+				"description": "Unable to get Service Now Incident Status",
+				"failureName": "HTTP Request for Service Now Incident Status Failed",
+				"type": "failure"
+			},
+			"End Step — Success": {
+				"description": "Request Success",
+				"type": "success"
+			},
+			"Get Identity": {
+				"actionId": "sp:get-identity",
+				"attributes": {
+					"id.$": "$.trigger.attributes.manager.id"
+				},
+				"description": "Get User's Manager",
+				"nextStep": "Define Variable",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": null,
+					"formRequestBody": {
+						"client_id": "413cf312d5732110af9dcae24a373414",
+						"client_secret": "xxx",
+						"grant_type": "password",
+						"password": "xxx",
+						"username": "admin"
+					},
+					"method": "post",
+					"requestContentType": "form",
+					"requestHeaders": null,
+					"url": "https://tenant.service-now.com/oauth_token.do"
+				},
+				"description": "Get Service Now Access Token",
+				"nextStep": "HTTP Request 1",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 1": {
+				"actionId": "sp:http",
+				"attributes": {
+					"jsonRequestBody": {
+						"caller_id": "admin",
+						"comments": "This incident was created from Sailpoint IDN Custom Workflow for user {{$.trigger.identity.name}}. Please provision this user to XYZ systems. Thank you.",
+						"description": "Please Create Accounts for the new user provisioned in XYZ system",
+						"due_date": "{{$.defineVariable.dueDate}}",
+						"short_description": "New User {{$.trigger.identity.name}} created in Sailpoint IDN",
+						"urgency": "3"
+					},
+					"method": "post",
+					"requestContentType": "json",
+					"requestHeaders": {
+						"Authorization": "Bearer {{$.hTTPRequest.body.access_token}}"
+					},
+					"url": "https://tenant.service-now.com/api/now/v1/table/incident"
+				},
+				"description": "Create a Service Now Incident using access token obtained in previous request",
+				"nextStep": "Wait",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 2": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": null,
+					"formRequestBody": {
+						"client_id": "413cf312d5732110af9dcae24a373414",
+						"client_secret": "xxx",
+						"grant_type": "password",
+						"password": "xxx",
+						"username": "admin"
+					},
+					"method": "post",
+					"requestContentType": "form",
+					"requestHeaders": null,
+					"url": "https://tenant.service-now.com/oauth_token.do"
+				},
+				"description": "Connect to Service Now and get Access Token",
+				"nextStep": "HTTP Request 3",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 3": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": null,
+					"jsonRequestBody": null,
+					"method": "get",
+					"requestContentType": "json",
+					"requestHeaders": {
+						"Authorization": "Bearer {{$.hTTPRequest2.body.access_token}}"
+					},
+					"url": "https://tenant.service-now.com/api/now/v1/table/incident",
+					"urlParams": {
+						"number": "{{$.hTTPRequest1.body.result.task_effective_number}}"
+					}
+				},
+				"description": "Check Service Now Incident Status",
+				"nextStep": "Compare Strings",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Hi,<br/><br/>\nService Now Incident for identity ${displayName} has been created successfully. \n<br/><br/>\nThe Incident Number is ${incNumber}.\n<br/><br/>\nThanks,<br/>\nYour IAM Team",
+					"context": {
+						"displayName.$": "$.trigger.identity.name",
+						"incNumber.$": "$.hTTPRequest1.body.result.task_effective_number"
+					},
+					"recipientEmailList.$": "$.getIdentity.attributes.email",
+					"subject": "Service Now Incident {{$.hTTPRequest1.body.result.task_effective_number}} Created"
+				},
+				"description": "Notify Manager about the Service Now Incident Creation",
+				"nextStep": "Wait 1",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email 1": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Service Now Incident ${incNumber} for user ${displayName} is now Closed.\n<br/><br/>\nPlease note that XYZ system provisioning for new user is now complete.\n<br/><br/>\nThanks,<br/>\nIAM Team",
+					"context": {
+						"displayName.$": "$.trigger.identity.name",
+						"incNumber.$": "$.hTTPRequest1.body.result.number"
+					},
+					"recipientEmailList.$": "$.getIdentity.attributes.email",
+					"subject": "Service Now Ticket Closed"
+				},
+				"description": "Notify Manager of Service Now Incident Completion",
+				"nextStep": "End Step — Success",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Wait": {
+				"actionId": "sp:sleep",
+				"attributes": {
+					"duration": "10m",
+					"type": "waitFor"
+				},
+				"description": "Wait for Incident to be created in Service Now",
+				"nextStep": "Compare Numbers",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Wait 1": {
+				"actionId": "sp:sleep",
+				"attributes": {
+					"duration": "7d",
+					"type": "waitFor"
+				},
+				"description": "Wait for few days to check Ticket Status",
+				"nextStep": "HTTP Request 2",
+				"type": "action",
+				"versionNumber": 1
+			}
+		}
+	},
+	"trigger": {
+		"type": "EVENT",
+		"attributes": {
+			"description": "New Identity Created in IDN",
+			"id": "idn:identity-created"
+		}
+	}
+}

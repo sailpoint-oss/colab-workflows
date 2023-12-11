@@ -105,7 +105,7 @@
 				"attributes": {
 					"action": "create",
 					"authenticationType": "basic",
-					"basicAuthPassword": "$.secrets.9579f656-d11a-422d-9c0a-df704252737e",
+					"basicAuthPassword": "",
 					"basicAuthUserName": "admin",
 					"caller": "admin",
 					"customFields": "assignment_group:Hardware\ndue_date:{{$.defineVariable1.dueDate}}\ncomments:New Ticket for provisioning user Hardware",
@@ -125,7 +125,7 @@
 				"attributes": {
 					"action": "get",
 					"authenticationType": "basic",
-					"basicAuthPassword": "$.secrets.fb59a96f-6849-40a5-9b2c-a18d7555b120",
+					"basicAuthPassword": "",
 					"basicAuthUserName": "admin",
 					"ticket": "{{$.manageServiceNowTicket.body.result.task_effective_number}}",
 					"url": "https://tenant.service-now.com/api/now/v1/table/sc_request?sysparm_query="

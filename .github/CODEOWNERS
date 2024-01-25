@@ -7,3 +7,5 @@ workflows/account-aggregation-failed-notification @iam-sharvari
 workflows/assign-roles-using-forms @iam-sharvari
 workflows/new-hire-additional-info @iam-sharvari
 workflows/reassign-object-owners @colin-mckibben-sp
+workflows/assign-roles-using-forms @iam-sharvari
+workflows/new-hire-additional-info @iam-sharvari

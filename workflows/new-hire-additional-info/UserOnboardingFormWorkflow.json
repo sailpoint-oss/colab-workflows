@@ -1,0 +1,106 @@
+{
+	"name": "Cybersolve User Onboarding Form Workflow",
+	"description": "Cybersolve User Onboarding Form Workflow",
+	"definition": {
+		"start": "Form",
+		"steps": {
+			"Define Variable": {
+				"attributes": {
+					"id": "sp:define-variable",
+					"variables": [
+						{
+							"description": "Date of Birth\n\nhttps://velocity.apache.org/tools/devel/apidocs/org/apache/velocity/tools/generic/DateTool.html",
+							"name": "Date of Birth",
+							"transforms": [
+								{
+									"id": "sp:transform:substring:string",
+									"input": {
+										"length": 10,
+										"start": 0
+									}
+								}
+							],
+							"variableA.$": "$.form.formData.dateOfBirth"
+						}
+					]
+				},
+				"nextStep": "Send Email",
+				"type": "Mutation"
+			},
+			"End Step — Success": {
+				"type": "success"
+			},
+			"Form": {
+				"actionId": "sp:forms",
+				"attributes": {
+					"deadline": "7d",
+					"formDefinitionId": "0f116186-9b9c-47ff-ada8-054866c34ef5",
+					"inputForForm_employeeName.$": "$.trigger.identity.name",
+					"inputForForm_employeeNumber.$": "$.trigger.attributes.employeeNumber",
+					"notificationBody": "Hello,<br/><br/>Please fill out the form below for <b>{{$.trigger.identity.name}}</b>. It includes the additional information required by IT and HR teams<br/><br/>Thank you!<br/><br/>Regards,<br/>IT Team",
+					"notificationSubject": "ATTN : Please Enter Additional User Information for Onboarding",
+					"recipient": "bcae0dce3d7f4dac827e7853835882d1",
+					"reminder": "2d",
+					"reminderBody": "Hello,<br/><br/>Please fill out the form below for <b>{{$.trigger.identity.name}}</b>. It includes the additional information required by IT and HR teams<br/><br/>Thank you!<br/><br/>Regards,<br/>IT Team"
+				},
+				"description": "Cybersolve User Onboarding Form",
+				"nextStep": "Get Identity",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Get Identity": {
+				"actionId": "sp:get-identity",
+				"attributes": {
+					"id.$": "$.form.formData.referredBy"
+				},
+				"description": "Get Referred By User Name",
+				"nextStep": "Define Variable",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Hi,<br/><br/>Thank you for filing out the Additional Information for user <b>${employeeName}</b>.<br/><br/>\n<b>Personal Details</b><br/>\nEmployee Name - ${employeeName}<br/>\nEmployee Number - ${employeeNumber},<br/>\nUser Type - #if( ${userType} == 'true')Full Time#{else}Part Time#end,<br/>\nPersonal Phone - ${personalPhone},<br/>\nPersonal Email - ${personalEmail},<br/>\nDate of Birth - ${dob},<br/>\nReferred By - ${referredBy},<br/>\nHobbies - ${hobbies}<br/><br/>\n<b>Address Details</b><br/>\nAddress Line 1 - ${addressLine1},<br/>\nCity - ${city}<br/><br/>\n<b>IT Requests</b><br/>\nPreferred Laptop - ${preferredLaptop},<br/>\n#if($preferredLaptop == 'Windows')Windows OS - ${windowsOsVersion},<br/>#end\n#if($preferredLaptop == 'Linux')Linux OS - ${linuxOs},<br/>#end\n<br/>Applications to Install : <br/>\nOracle - #if( ${oracle} == 'true')Yes#{else}No#end,<br/>\nMicrosoft - #if( ${microsoft} == 'true')Yes#{else}No#end,<br/>\nEclipse - #if( ${eclipse} == 'true')Yes#{else}No#end,<br/>\nPostman - #if( ${postman} == 'true')Yes#{else}No#end<br/>\n<br/>Additional Requests - #if($additionalRequests)${additionalRequests}#{else}None#end<br/>\n<br/><br/>Thank you,<br/>IAM Team<br/>",
+					"context": {
+						"additionalRequests.$": "$.form.formData.additionalRequests",
+						"addressLine1.$": "$.form.formData.addressLine1",
+						"city.$": "$.form.formData.city",
+						"dateOfBirth.$": "$.form.formData.dateOfBirth",
+						"dob.$": "$.defineVariable.dateOfBirth",
+						"eclipse.$": "$.form.formData.eclipse",
+						"employeeName.$": "$.form.formData.employeeName",
+						"employeeNumber.$": "$.form.formData.employeeNumber",
+						"hobbies.$": "$.form.formData.hobbies",
+						"linuxOs.$": "$.form.formData.linuxOs",
+						"microsoft.$": "$.form.formData.microsoft",
+						"oracle.$": "$.form.formData.oracle",
+						"personalEmail.$": "$.form.formData.personalEmail",
+						"personalPhone.$": "$.form.formData.personalPhone",
+						"postman.$": "$.form.formData.postman",
+						"preferredLaptop.$": "$.form.formData.preferredLaptop",
+						"referredBy.$": "$.getIdentity.attributes.displayName",
+						"userType.$": "$.form.formData.userType",
+						"windowsOsVersion.$": "$.form.formData.windowsOsVersion"
+					},
+					"from": null,
+					"recipientEmailList": [
+						"xxxxx@xxxxx.com"
+					],
+					"replyTo.$": "",
+					"subject": "User Onboarding Form Submission Complete"
+				},
+				"description": "Send Email Notification To Manager",
+				"nextStep": "End Step — Success",
+				"type": "action",
+				"versionNumber": 2
+			}
+		}
+	},
+	"trigger": {
+		"type": "EVENT",
+		"attributes": {
+			"id": "idn:identity-created"
+		}
+	}
+}

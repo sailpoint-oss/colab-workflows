@@ -1,0 +1,103 @@
+{
+	"name": "Assign Roles via Forms",
+	"description": "Assign Roles to a user via Forms Selection",
+	"definition": {
+		"start": "Form",
+		"steps": {
+			"End Step — Success": {
+				"type": "success"
+			},
+			"Form": {
+				"actionId": "sp:forms",
+				"attributes": {
+					"deadline": "7d",
+					"formDefinitionId": "57e25357-e5d5-4ba0-a6ac-d3bb6520731d",
+					"inputForForm_employeeName.$": "$.trigger.attributes.displayName",
+					"inputForForm_employeeNumber.$": "$.trigger.attributes.employeeNumber",
+					"notificationBody": "Hi,<br/><br/>Please use this form to assign additional roles to user - {{$.trigger.attributes.displayName}}. <br/><br/>Regards,<br/>IAM Team",
+					"notificationSubject": "Action: Role Assignment Required",
+					"recipient": "bcae0dce3d7f4dac827e7853835882d1",
+					"reminder": "2d",
+					"reminderBody": "Hi,<br/><br/>Please use this form to assign additional roles to user - {{$.trigger.attributes.displayName}}. <br/><br/>Regards,<br/>IAM Team"
+				},
+				"description": "Form sent to Manager to select Role Assignemnt for user",
+				"nextStep": "Send Email",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Get Identity": {
+				"actionId": "sp:get-identity",
+				"attributes": {
+					"id.$": "$.getListOfIdentities.identities[0].id"
+				},
+				"nextStep": "Loop",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Get List of Identities": {
+				"actionId": "sp:get-identities",
+				"attributes": {
+					"inputQuery": "attributes.identificationNumber.exact:{{$.form.formData.employeeNumber}}",
+					"searchBy": "searchQuery"
+				},
+				"nextStep": "Get Identity",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Loop": {
+				"actionId": "sp:loop:iterator",
+				"attributes": {
+					"context.$": "$.getIdentity",
+					"input.$": "$.form.formData.selectRoles",
+					"start": "Manage Access",
+					"steps": {
+						"End Step — Success 1": {
+							"type": "success"
+						},
+						"Manage Access": {
+							"actionId": "sp:access:manage",
+							"attributes": {
+								"addIdentities.$": "$.loop.context.id",
+								"comments": "Providing additional access",
+								"removeIdentity.$": "$.getIdentity.id",
+								"requestType": "GRANT_ACCESS",
+								"requestedItems": [
+									{
+										"id": "{{$.loop.loopInput}}",
+										"type": "ROLE"
+									}
+								]
+							},
+							"nextStep": "End Step — Success 1",
+							"type": "action",
+							"versionNumber": 1
+						}
+					}
+				},
+				"nextStep": "End Step — Success",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Send Email": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "{{$.form.formData.selectRoles}}",
+					"context": {},
+					"recipientEmailList": [
+						"xxxxx@xxxxx.com"
+					],
+					"subject": "Form Data"
+				},
+				"nextStep": "Get List of Identities",
+				"type": "action",
+				"versionNumber": 2
+			}
+		}
+	},	
+	"trigger": {
+		"type": "EVENT",
+		"attributes": {
+			"id": "idn:identity-created"
+		}
+	}
+}

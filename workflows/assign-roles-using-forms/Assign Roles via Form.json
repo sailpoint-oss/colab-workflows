@@ -1,0 +1,176 @@
+{
+    "id": "57e25357-e5d5-4ba0-a6ac-d3bb6520731d",
+    "name": "Assign Roles",
+    "description": "Assign Roles",
+    "owner": {
+        "type": "IDENTITY",
+        "id": "bcae0dce3d7f4dac827e7853835882d1"
+    },
+    "usedBy": [],
+    "formInput": [
+        {
+            "id": "employeeNumber",
+            "type": "STRING",
+            "label": "Employee Number",
+            "description": "Employee Number"
+        },
+        {
+            "id": "employeeName",
+            "type": "STRING",
+            "label": "Employee Name",
+            "description": "Employee Name"
+        }
+    ],
+    "formElements": [
+        {
+            "id": "910277720848",
+            "elementType": "SECTION",
+            "config": {
+                "alignment": "LEFT",
+                "description": "",
+                "formElements": [
+                    {
+                        "config": {
+                            "default": "",
+                            "description": "",
+                            "helpText": "",
+                            "label": "Employee Number",
+                            "placeholder": "",
+                            "required": false
+                        },
+                        "elementType": "TEXT",
+                        "id": "1545094594991",
+                        "key": "employeeNumber",
+                        "validations": []
+                    },
+                    {
+                        "config": {
+                            "default": "",
+                            "description": "",
+                            "helpText": "",
+                            "label": "Employee Name",
+                            "placeholder": "",
+                            "required": false
+                        },
+                        "elementType": "TEXT",
+                        "id": "521341509460",
+                        "key": "employeeName",
+                        "validations": []
+                    },
+                    {
+                        "config": {
+                            "dataSource": {
+                                "config": {
+                                    "objectType": "ROLE"
+                                },
+                                "dataSourceType": "INTERNAL"
+                            },
+                            "forceSelect": true,
+                            "helpText": "Select the roles you wish to assign from the list below",
+                            "label": "Select Roles",
+                            "maximum": 3,
+                            "placeholder": "Role Name",
+                            "required": true
+                        },
+                        "elementType": "SELECT",
+                        "id": "517197279797",
+                        "key": "selectRoles",
+                        "validations": [
+                            {
+                                "validationType": "REQUIRED"
+                            }
+                        ]
+                    }
+                ],
+                "label": "Role Assignment",
+                "labelStyle": "h2",
+                "showLabel": true
+            },
+            "validations": []
+        }
+    ],
+    "formConditions": [
+        {
+            "ruleOperator": "AND",
+            "rules": [
+                {
+                    "sourceType": "INPUT",
+                    "source": "Employee Number",
+                    "operator": "EM",
+                    "valueType": "STRING",
+                    "value": ""
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "DISABLE",
+                    "config": {
+                        "element": "521341509460"
+                    }
+                },
+                {
+                    "effectType": "DISABLE",
+                    "config": {
+                        "element": "517197279797"
+                    }
+                }
+            ]
+        },
+        {
+            "ruleOperator": "AND",
+            "rules": [
+                {
+                    "sourceType": "INPUT",
+                    "source": "Employee Number",
+                    "operator": "NOT_EM",
+                    "valueType": "STRING",
+                    "value": ""
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "SET_DEFAULT_VALUE",
+                    "config": {
+                        "defaultValueLabel": "Employee Number",
+                        "element": "1545094594991"
+                    }
+                },
+                {
+                    "effectType": "DISABLE",
+                    "config": {
+                        "element": "1545094594991"
+                    }
+                }
+            ]
+        },
+        {
+            "ruleOperator": "AND",
+            "rules": [
+                {
+                    "sourceType": "INPUT",
+                    "source": "Employee Name",
+                    "operator": "NOT_EM",
+                    "valueType": "STRING",
+                    "value": ""
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "SET_DEFAULT_VALUE",
+                    "config": {
+                        "defaultValueLabel": "Employee Name",
+                        "element": "521341509460"
+                    }
+                },
+                {
+                    "effectType": "DISABLE",
+                    "config": {
+                        "element": "521341509460"
+                    }
+                }
+            ]
+        }
+    ],
+    "created": "2023-11-06T10:47:24.875353142Z",
+    "modified": "2024-01-10T03:14:32.648826623Z"
+}

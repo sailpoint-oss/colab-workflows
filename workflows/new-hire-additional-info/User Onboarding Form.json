@@ -1,0 +1,734 @@
+{
+    "id": "0f116186-9b9c-47ff-ada8-054866c34ef5",
+    "name": "User Onboarding",
+    "description": "New User Onboarding Form to gather additional information",
+    "owner": {
+        "type": "IDENTITY",
+        "id": "bcae0dce3d7f4dac827e7853835882d1"
+    },
+    "usedBy": [
+        {
+            "type": "WORKFLOW",
+            "id": "fd2780a2-7ce2-45e3-93ff-2732de71c696"
+        }
+    ],
+    "formInput": [
+        {
+            "id": "employeeName",
+            "type": "STRING",
+            "label": "Employee Name",
+            "description": "Employee Name"
+        },
+        {
+            "id": "employeeNumber",
+            "type": "STRING",
+            "label": "Employee Number",
+            "description": "Employee Number"
+        }
+    ],
+    "formElements": [
+        {
+            "id": "224499714467",
+            "elementType": "SECTION",
+            "config": {
+                "alignment": "CENTER",
+                "description": "",
+                "formElements": [
+                    {
+                        "config": {
+                            "alignment": "CENTER",
+                            "altText": "Logo",
+                            "fileId": "01HKSSY7B77TEF3N4ZYBWF9JEB.jpg",
+                            "label": "Logo",
+                            "mimeType": "image/jpeg",
+                            "originalFilename": "logo.jpg",
+                            "showLabel": false
+                        },
+                        "elementType": "IMAGE",
+                        "id": "450002799871",
+                        "key": "",
+                        "validations": []
+                    },
+                    {
+                        "config": {
+                            "description": "<p style=\"text-align: center;\"><span style=\"color: rgb(185, 106, 217); font-size: 12pt;\">Please enter the information below</span></p>",
+                            "label": "Description Field",
+                            "showLabel": false
+                        },
+                        "elementType": "DESCRIPTION",
+                        "id": "236874197365",
+                        "key": "",
+                        "validations": []
+                    }
+                ],
+                "label": "User Onboarding Form",
+                "labelStyle": "h2",
+                "showLabel": true
+            },
+            "validations": []
+        },
+        {
+            "id": "1684040207998",
+            "elementType": "SECTION",
+            "config": {
+                "alignment": "LEFT",
+                "description": "Personal Information",
+                "formElements": [
+                    {
+                        "config": {
+                            "default": "",
+                            "description": "",
+                            "helpText": "",
+                            "label": "Employee Name",
+                            "placeholder": "John Doe",
+                            "required": true
+                        },
+                        "elementType": "TEXT",
+                        "id": "1429005651615",
+                        "key": "employeeName",
+                        "validations": [
+                            {
+                                "validationType": "REQUIRED"
+                            }
+                        ]
+                    },
+                    {
+                        "config": {
+                            "default": "",
+                            "description": "",
+                            "helpText": "",
+                            "label": "Employee Number",
+                            "placeholder": "12345678",
+                            "required": true
+                        },
+                        "elementType": "TEXT",
+                        "id": "1671045461835",
+                        "key": "employeeNumber",
+                        "validations": [
+                            {
+                                "validationType": "REQUIRED"
+                            },
+                            {
+                                "config": {
+                                    "min": 5
+                                },
+                                "validationType": "MIN_LENGTH"
+                            },
+                            {
+                                "config": {
+                                    "max": 10
+                                },
+                                "validationType": "MAX_LENGTH"
+                            }
+                        ]
+                    },
+                    {
+                        "config": {
+                            "default": true,
+                            "falseLabel": "Part Time",
+                            "helpText": "Are you a Full Time employee or a Part Time employee?",
+                            "label": "User Type",
+                            "trueLabel": "Full Time"
+                        },
+                        "elementType": "TOGGLE",
+                        "id": "1609723929797",
+                        "key": "userType",
+                        "validations": []
+                    },
+                    {
+                        "config": {
+                            "description": "",
+                            "formatAsYouType": true,
+                            "helpText": "",
+                            "internationalized": true,
+                            "label": "Personal Phone",
+                            "placeholder": "",
+                            "required": false
+                        },
+                        "elementType": "PHONE",
+                        "id": "1515015928726",
+                        "key": "personalPhone",
+                        "validations": [
+                            {
+                                "validationType": "PHONE"
+                            }
+                        ]
+                    },
+                    {
+                        "config": {
+                            "default": "",
+                            "description": "",
+                            "helpText": "",
+                            "label": "Personal Email",
+                            "placeholder": "john.doe@gmail.com",
+                            "required": false
+                        },
+                        "elementType": "EMAIL",
+                        "id": "701850857199",
+                        "key": "personalEmail",
+                        "validations": [
+                            {
+                                "validationType": "EMAIL"
+                            }
+                        ]
+                    },
+                    {
+                        "config": {
+                            "default": null,
+                            "description": "",
+                            "helpText": "",
+                            "label": "Date Of Birth",
+                            "placeholder": "01/01/1900",
+                            "required": false
+                        },
+                        "elementType": "DATE",
+                        "id": "53881113108",
+                        "key": "dateOfBirth",
+                        "validations": [
+                            {
+                                "validationType": "DATE"
+                            }
+                        ]
+                    },
+                    {
+                        "config": {
+                            "dataSource": {
+                                "config": {
+                                    "objectType": "IDENTITY"
+                                },
+                                "dataSourceType": "INTERNAL"
+                            },
+                            "forceSelect": true,
+                            "helpText": "Please select the contact the within company who referred you.",
+                            "label": "Referred By",
+                            "maximum": 1,
+                            "placeholder": "",
+                            "required": false
+                        },
+                        "elementType": "SELECT",
+                        "id": "267723420812",
+                        "key": "referredBy",
+                        "validations": []
+                    },
+                    {
+                        "config": {
+                            "dataSource": {
+                                "config": {
+                                    "options": [
+                                        {
+                                            "label": "Reading",
+                                            "subLabel": "",
+                                            "value": "Reading"
+                                        },
+                                        {
+                                            "label": "Cycling",
+                                            "subLabel": "",
+                                            "value": "Cycling"
+                                        },
+                                        {
+                                            "label": "Tennis",
+                                            "subLabel": "",
+                                            "value": "Tennis"
+                                        },
+                                        {
+                                            "label": "Walking",
+                                            "subLabel": "",
+                                            "value": "Walking"
+                                        },
+                                        {
+                                            "label": "Travelling",
+                                            "subLabel": "",
+                                            "value": "Travelling"
+                                        }
+                                    ]
+                                },
+                                "dataSourceType": "STATIC"
+                            },
+                            "forceSelect": true,
+                            "helpText": "",
+                            "label": "Hobbies",
+                            "maximum": 3,
+                            "placeholder": "",
+                            "required": false
+                        },
+                        "elementType": "SELECT",
+                        "id": "734025725321",
+                        "key": "hobbies",
+                        "validations": []
+                    }
+                ],
+                "label": "Personal Information",
+                "labelStyle": "h2",
+                "showLabel": true
+            },
+            "validations": []
+        },
+        {
+            "id": "1030151693562",
+            "elementType": "SECTION",
+            "config": {
+                "alignment": "LEFT",
+                "description": "Address Infomation",
+                "formElements": [
+                    {
+                        "config": {
+                            "default": "",
+                            "description": "",
+                            "helpText": "Address Line 1",
+                            "label": "Address Line 1",
+                            "placeholder": "Aptartment and Steet name",
+                            "required": false
+                        },
+                        "elementType": "TEXT",
+                        "id": "1603331229619",
+                        "key": "addressLine1",
+                        "validations": []
+                    },
+                    {
+                        "config": {
+                            "dataSource": {
+                                "config": {
+                                    "aggregationBucketField": "attributes.city.exact",
+                                    "indices": [
+                                        "identities"
+                                    ],
+                                    "query": "attributes.cloudLifecycleState:active"
+                                },
+                                "dataSourceType": "SEARCH"
+                            },
+                            "forceSelect": true,
+                            "helpText": "",
+                            "label": "City",
+                            "maximum": 1,
+                            "placeholder": "",
+                            "required": false
+                        },
+                        "elementType": "SELECT",
+                        "id": "1664914974591",
+                        "key": "city",
+                        "validations": []
+                    }
+                ],
+                "label": "Address Information",
+                "labelStyle": "h2",
+                "showLabel": true
+            },
+            "validations": []
+        },
+        {
+            "id": "1337327807775",
+            "elementType": "SECTION",
+            "config": {
+                "alignment": "LEFT",
+                "description": "",
+                "formElements": [
+                    {
+                        "config": {
+                            "dataSource": {
+                                "config": {
+                                    "options": [
+                                        {
+                                            "label": "Windows",
+                                            "subLabel": "",
+                                            "value": "Windows"
+                                        },
+                                        {
+                                            "label": "Mac",
+                                            "subLabel": "",
+                                            "value": "Mac"
+                                        },
+                                        {
+                                            "label": "Linux",
+                                            "subLabel": "",
+                                            "value": "Linux"
+                                        },
+                                        {
+                                            "label": "Chromebook",
+                                            "subLabel": "",
+                                            "value": "Chromebook"
+                                        }
+                                    ]
+                                },
+                                "dataSourceType": "STATIC"
+                            },
+                            "forceSelect": true,
+                            "helpText": "Choose a preferred Laptop Type",
+                            "label": "Preferred Laptop",
+                            "maximum": 1,
+                            "placeholder": "Laptop",
+                            "required": false
+                        },
+                        "elementType": "SELECT",
+                        "id": "373090611599",
+                        "key": "preferredLaptop",
+                        "validations": []
+                    },
+                    {
+                        "config": {
+                            "dataSource": {
+                                "config": {
+                                    "options": [
+                                        {
+                                            "label": "Windows 10",
+                                            "subLabel": "",
+                                            "value": "Windows 10"
+                                        },
+                                        {
+                                            "label": "Windows 11",
+                                            "subLabel": "",
+                                            "value": "Windows 11"
+                                        }
+                                    ]
+                                },
+                                "dataSourceType": "STATIC"
+                            },
+                            "forceSelect": true,
+                            "helpText": "Please select the Windows OS Version",
+                            "label": "Windows OS Version",
+                            "maximum": 1,
+                            "placeholder": "Windows 10",
+                            "required": false
+                        },
+                        "elementType": "SELECT",
+                        "id": "384477034392",
+                        "key": "windowsOsVersion",
+                        "validations": []
+                    },
+                    {
+                        "config": {
+                            "dataSource": {
+                                "config": {
+                                    "options": [
+                                        {
+                                            "label": "Ubuntu",
+                                            "subLabel": "",
+                                            "value": "Ubuntu"
+                                        },
+                                        {
+                                            "label": "Fedora",
+                                            "subLabel": "",
+                                            "value": "Fedora"
+                                        },
+                                        {
+                                            "label": "RHEL",
+                                            "subLabel": "",
+                                            "value": "RHEL"
+                                        }
+                                    ]
+                                },
+                                "dataSourceType": "STATIC"
+                            },
+                            "forceSelect": true,
+                            "helpText": "Please select the Linux OS",
+                            "label": "Linux OS",
+                            "maximum": 1,
+                            "placeholder": "RHEL",
+                            "required": false
+                        },
+                        "elementType": "SELECT",
+                        "id": "189407976938",
+                        "key": "linuxOs",
+                        "validations": []
+                    },
+                    {
+                        "config": {
+                            "columnCount": 2,
+                            "columns": [
+                                [
+                                    {
+                                        "config": {
+                                            "default": false,
+                                            "falseLabel": "No",
+                                            "helpText": "",
+                                            "label": "Oracle",
+                                            "trueLabel": "Yes"
+                                        },
+                                        "elementType": "TOGGLE",
+                                        "id": "96112758113",
+                                        "key": "oracle",
+                                        "validations": []
+                                    },
+                                    {
+                                        "config": {
+                                            "default": false,
+                                            "falseLabel": "No",
+                                            "helpText": "Use this field to capture yes/no responses",
+                                            "label": "Microsoft",
+                                            "trueLabel": "Yes"
+                                        },
+                                        "elementType": "TOGGLE",
+                                        "id": "631636696630",
+                                        "key": "microsoft",
+                                        "validations": []
+                                    }
+                                ],
+                                [
+                                    {
+                                        "config": {
+                                            "default": false,
+                                            "falseLabel": "No",
+                                            "helpText": "",
+                                            "label": "Eclipse",
+                                            "trueLabel": "Yes"
+                                        },
+                                        "elementType": "TOGGLE",
+                                        "id": "224544041115",
+                                        "key": "eclipse",
+                                        "validations": []
+                                    },
+                                    {
+                                        "config": {
+                                            "default": false,
+                                            "falseLabel": "No",
+                                            "helpText": "Use this field to capture yes/no responses",
+                                            "label": "Postman",
+                                            "trueLabel": "Yes"
+                                        },
+                                        "elementType": "TOGGLE",
+                                        "id": "1564902885354",
+                                        "key": "postman",
+                                        "validations": []
+                                    }
+                                ]
+                            ],
+                            "description": "",
+                            "label": "Require Access to Applications",
+                            "labelStyle": "h5",
+                            "showLabel": true
+                        },
+                        "elementType": "COLUMN_SET",
+                        "id": "96610211858",
+                        "key": "",
+                        "validations": []
+                    },
+                    {
+                        "config": {
+                            "default": "",
+                            "description": "",
+                            "helpText": "",
+                            "label": "Additional Requests",
+                            "placeholder": "Please provide information about any additional requests",
+                            "required": false,
+                            "resize": false,
+                            "rows": 2
+                        },
+                        "elementType": "TEXTAREA",
+                        "id": "1422617803725",
+                        "key": "additionalRequests",
+                        "validations": []
+                    }
+                ],
+                "label": "IT Resources",
+                "labelStyle": "h2",
+                "showLabel": true
+            },
+            "validations": []
+        }
+    ],
+    "formConditions": [
+        {
+            "ruleOperator": "AND",
+            "rules": [
+                {
+                    "sourceType": "INPUT",
+                    "source": "Employee Number",
+                    "operator": "NOT_EM",
+                    "valueType": "STRING",
+                    "value": ""
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "SET_DEFAULT_VALUE",
+                    "config": {
+                        "defaultValueLabel": "Employee Number",
+                        "element": "1671045461835"
+                    }
+                },
+                {
+                    "effectType": "DISABLE",
+                    "config": {
+                        "element": "1671045461835"
+                    }
+                }
+            ]
+        },
+        {
+            "ruleOperator": "AND",
+            "rules": [
+                {
+                    "sourceType": "INPUT",
+                    "source": "Employee Name",
+                    "operator": "NOT_EM",
+                    "valueType": "STRING",
+                    "value": ""
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "SET_DEFAULT_VALUE",
+                    "config": {
+                        "defaultValueLabel": "Employee Name",
+                        "element": "1429005651615"
+                    }
+                },
+                {
+                    "effectType": "DISABLE",
+                    "config": {
+                        "element": "1429005651615"
+                    }
+                }
+            ]
+        },
+        {
+            "ruleOperator": "AND",
+            "rules": [
+                {
+                    "sourceType": "ELEMENT",
+                    "source": "userType",
+                    "operator": "EQ",
+                    "valueType": "BOOLEAN",
+                    "value": "false"
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "HIDE",
+                    "config": {
+                        "element": "1337327807775"
+                    }
+                }
+            ]
+        },
+        {
+            "ruleOperator": "AND",
+            "rules": [
+                {
+                    "sourceType": "ELEMENT",
+                    "source": "addressLine1",
+                    "operator": "EM",
+                    "valueType": "STRING",
+                    "value": ""
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "DISABLE",
+                    "config": {
+                        "element": "1664914974591"
+                    }
+                }
+            ]
+        },
+        {
+            "ruleOperator": "AND",
+            "rules": [
+                {
+                    "sourceType": "ELEMENT",
+                    "source": "preferredLaptop",
+                    "operator": "EM",
+                    "valueType": "STRING",
+                    "value": ""
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "HIDE",
+                    "config": {
+                        "element": "96610211858"
+                    }
+                },
+                {
+                    "effectType": "HIDE",
+                    "config": {
+                        "element": "1422617803725"
+                    }
+                }
+            ]
+        },
+        {
+            "ruleOperator": "OR",
+            "rules": [
+                {
+                    "sourceType": "ELEMENT",
+                    "source": "preferredLaptop",
+                    "operator": "EQ",
+                    "valueType": "STRING",
+                    "value": "Linux"
+                },
+                {
+                    "sourceType": "ELEMENT",
+                    "source": "preferredLaptop",
+                    "operator": "EQ",
+                    "valueType": "STRING",
+                    "value": "Mac"
+                },
+                {
+                    "sourceType": "ELEMENT",
+                    "source": "preferredLaptop",
+                    "operator": "EQ",
+                    "valueType": "STRING",
+                    "value": "Chromebook"
+                },
+                {
+                    "sourceType": "ELEMENT",
+                    "source": "preferredLaptop",
+                    "operator": "EM",
+                    "valueType": "STRING",
+                    "value": ""
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "HIDE",
+                    "config": {
+                        "element": "384477034392"
+                    }
+                }
+            ]
+        },
+        {
+            "ruleOperator": "OR",
+            "rules": [
+                {
+                    "sourceType": "ELEMENT",
+                    "source": "preferredLaptop",
+                    "operator": "EQ",
+                    "valueType": "STRING",
+                    "value": "Windows"
+                },
+                {
+                    "sourceType": "ELEMENT",
+                    "source": "preferredLaptop",
+                    "operator": "EQ",
+                    "valueType": "STRING",
+                    "value": "Mac"
+                },
+                {
+                    "sourceType": "ELEMENT",
+                    "source": "preferredLaptop",
+                    "operator": "EQ",
+                    "valueType": "STRING",
+                    "value": "Chromebook"
+                },
+                {
+                    "sourceType": "ELEMENT",
+                    "source": "preferredLaptop",
+                    "operator": "EM",
+                    "valueType": "STRING",
+                    "value": ""
+                }
+            ],
+            "effects": [
+                {
+                    "effectType": "HIDE",
+                    "config": {
+                        "element": "189407976938"
+                    }
+                }
+            ]
+        }
+    ],
+    "created": "2023-11-06T06:52:30.861508639Z",
+    "modified": "2024-01-11T06:33:27.489476588Z"
+}

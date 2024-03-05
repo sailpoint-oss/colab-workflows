@@ -1,0 +1,215 @@
+{
+	"name": "Temporary Admin Access",
+	"description": "A workflow that will automatically handle the granting and revoking of admin privilege.",
+	"definition": {
+		"start": "Get Identity",
+		"steps": {
+			"Compare Strings": {
+				"choiceList": [
+					{
+						"comparator": "StringEquals",
+						"nextStep": "HTTP Request",
+						"variableA.$": "$.form1.formData.decision",
+						"variableB": "Approve"
+					}
+				],
+				"defaultStep": "Send Email",
+				"displayName": "Handle Approver's Decision",
+				"type": "choice"
+			},
+			"Compare Strings 1": {
+				"choiceList": [
+					{
+						"comparator": "StringEquals",
+						"nextStep": "HTTP Request 1",
+						"variableA.$": "$.hTTPRequest2.body.capabilities[0]",
+						"variableB": "ORG_ADMIN"
+					}
+				],
+				"defaultStep": "Send Email 1",
+				"displayName": "Check if ORG_ADMIN is first item",
+				"type": "choice"
+			},
+			"End Step - Success": {
+				"displayName": "",
+				"type": "success"
+			},
+			"End Step - Success 1": {
+				"displayName": "",
+				"type": "success"
+			},
+			"End Step - Success 2": {
+				"displayName": "",
+				"type": "success"
+			},
+			"Form": {
+				"actionId": "sp:forms",
+				"attributes": {
+					"deadline": "3d",
+					"formDefinitionId": "",
+					"notificationBody": "You have requested temporary admin privilege. Please complete this form to continue with the request.",
+					"notificationSubject": "Additional information for Temporary Admin Access needed",
+					"recipient.$": "$.trigger.requestedFor.id",
+					"reminder": "2d"
+				},
+				"displayName": "Send Form to Requester",
+				"nextStep": "Form 1",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Form 1": {
+				"actionId": "sp:forms",
+				"attributes": {
+					"deadline": "3d",
+					"formDefinitionId": "",
+					"inputForForm_desiredExpirationDate.$": "$.form.formData.removeDate",
+					"inputForForm_reasonForAccess.$": "$.form.formData.reasonForAccess",
+					"inputForForm_requesterName.$": "$.trigger.requestedFor.name",
+					"inputForForm_userLevel": "ORG_ADMIN",
+					"notificationBody": "A user has requested elevated admin permissions. Please approve or deny by submitting this form.",
+					"notificationSubject": "Request for admin permissions",
+					"recipient": "",
+					"reminder": "2d"
+				},
+				"displayName": "Send Form to Approver",
+				"nextStep": "Compare Strings",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Get Identity": {
+				"actionId": "sp:get-identity",
+				"attributes": {
+					"id.$": "$.trigger.requestedFor.id"
+				},
+				"description": "",
+				"displayName": "Get Requester's Email",
+				"nextStep": "Form",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonPatchRequestBody": [
+						{
+							"op": "add",
+							"path": "/capabilities/0",
+							"value": "ORG_ADMIN"
+						}
+					],
+					"method": "patch",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthCredentialLocation": "oAuthInHeader",
+					"oAuthTokenUrl": "https://tenant.api.identitynow.com/oauth/token",
+					"requestContentType": "json-patch+json",
+					"url": "https://tenant.api.identitynow.com/v3/auth-users/{{$.trigger.requestedFor.id}}"
+				},
+				"displayName": "Grant Access",
+				"nextStep": "Wait",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 1": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonPatchRequestBody": [
+						{
+							"op": "remove",
+							"path": "/capabilities/0"
+						}
+					],
+					"method": "patch",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthCredentialLocation": "oAuthInHeader",
+					"oAuthTokenUrl": "https://tenant.api.identitynow.com/oauth/token",
+					"requestContentType": "json-patch+json",
+					"url": "https://tenant.api.identitynow.com/v3/auth-users/{{$.trigger.requestedFor.id}}"
+				},
+				"displayName": "Remove Access",
+				"nextStep": "Send Email 2",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 2": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"method": "get",
+					"oAuthClientId": "",
+					"oAuthClientSecret": "",
+					"oAuthCredentialLocation": "oAuthInHeader",
+					"oAuthTokenUrl": "https://tenant.api.identitynow.com/oauth/token",
+					"url": "https://tenant.api.identitynow.com/v3/auth-users/{{$.trigger.requestedFor.id}}"
+				},
+				"displayName": "Get Current Access",
+				"nextStep": "Compare Strings 1",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "John Doe denied your request for temporary admin permissions with the following comments.<br><br>\n\n{{$.form1.formData.comments}}",
+					"context": {},
+					"recipientEmailList.$": "$.getIdentity.attributes.email",
+					"subject": "Your temporary admin access was denied"
+				},
+				"displayName": "",
+				"nextStep": "End Step - Success 2",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email 1": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "The user {{$.trigger.requestedFor.name}} no longer needs \"ORG_ADMIN\" access, but the automation was unable to remove it automatically. Please manually remove their admin permissions.",
+					"context": {},
+					"recipientEmailList": [],
+					"subject": "Manually revoke temporary admin permissions"
+				},
+				"description": "As an admin to manually remove the admin permissions for the user.",
+				"displayName": "",
+				"nextStep": "End Step - Success",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email 2": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Your temporary admin permissions have expired and been revoked.",
+					"context": {},
+					"recipientEmailList.$": "$.getIdentity.attributes.email",
+					"subject": "Your Admin access has expired"
+				},
+				"description": "Inform the user that their access has expired.",
+				"displayName": "",
+				"nextStep": "End Step - Success 1",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Wait": {
+				"actionId": "sp:sleep",
+				"attributes": {
+					"date.$": "$.form.formData.removeDate",
+					"time": "1969-12-31T05:00:00.000Z",
+					"type": "waitUntil"
+				},
+				"displayName": "Wait for remove date",
+				"nextStep": "HTTP Request 2",
+				"type": "action",
+				"versionNumber": 1
+			}
+		}
+	},
+	"trigger": {
+		"type": "EVENT",
+		"attributes": {
+			"filter.$": "$.requestedItemsStatus[?(@.name == \"Temporary Admin Access\")]",
+			"id": "idn:access-request-post-approval"
+		}
+	}
+}

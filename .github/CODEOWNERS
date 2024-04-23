@@ -10,3 +10,4 @@ workflows/reassign-object-owners @colin-mckibben-sp
 workflows/assign-roles-using-forms @iam-sharvari
 workflows/new-hire-additional-info @iam-sharvari
 workflows/temporary-admin-access @colin-mckibben-sp
+workflows/delayed-deprovisioning-of-birthright-role-on-mover @ruben-elizondo-sp

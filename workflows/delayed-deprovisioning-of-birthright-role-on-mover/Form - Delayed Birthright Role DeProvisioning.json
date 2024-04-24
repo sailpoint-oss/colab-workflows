@@ -1,0 +1,381 @@
+[
+  {
+    "version": 1,
+    "self": {
+      "type": "FORM_DEFINITION",
+      "id": "3fcea1cb-fcfb-4e64-910f-16d365b26e84",
+      "name": "Delayed Birthright Role Deprovisioning"
+    },
+    "object": {
+      "id": "3fcea1cb-fcfb-4e64-910f-16d365b26e84",
+      "name": "Delayed Birthright Role Deprovisioning",
+      "description": "",
+      "owner": {
+        "type": "IDENTITY",
+        "id": "28d0d82df7514dcf874030ce084a3668",
+        "name": ""
+      },
+      "usedBy": [],
+      "formInput": [
+        {
+          "id": "currentTitle",
+          "type": "STRING",
+          "label": "Current Title",
+          "description": ""
+        },
+        {
+          "id": "idenitityname",
+          "type": "STRING",
+          "label": "IdenitityName",
+          "description": ""
+        },
+        {
+          "id": "previousTitle",
+          "type": "STRING",
+          "label": "Previous Title",
+          "description": ""
+        },
+        {
+          "id": "lostRoles",
+          "type": "ARRAY",
+          "label": "Lost Roles",
+          "description": ""
+        },
+        {
+          "id": "identityId",
+          "type": "STRING",
+          "label": "IdentityID",
+          "description": ""
+        }
+      ],
+      "formElements": [
+        {
+          "id": "1167750864903",
+          "elementType": "SECTION",
+          "config": {
+            "alignment": "LEFT",
+            "description": "",
+            "formElements": [
+              {
+                "config": {
+                  "description": "<p>Your direct report has changed job titles and as a result they have lost access they previously held.</p>\n<p>If they need some time to complete their tasks and projects, use this form to <em><strong>temporarily</strong> </em>extend their current access.<span style=\"color: rgb(0, 0, 0);\"> </span></p>\n<p><span style=\"color: rgb(0, 0, 0);\">Please fill out the fields below.  Any extended access will be <span style=\"text-decoration: underline;\">automatically removed after the selected time.</span> </span></p>",
+                  "label": "Description Field",
+                  "showLabel": false
+                },
+                "elementType": "DESCRIPTION",
+                "id": "1371770739071",
+                "key": "",
+                "validations": []
+              },
+              {
+                "config": {
+                  "default": "",
+                  "description": "",
+                  "helpText": "",
+                  "label": "Identity Name",
+                  "placeholder": "",
+                  "required": false
+                },
+                "elementType": "TEXT",
+                "id": "801911992153",
+                "key": "identityName",
+                "validations": []
+              },
+              {
+                "config": {
+                  "default": "",
+                  "description": "",
+                  "helpText": "",
+                  "label": "IdentityID",
+                  "placeholder": "",
+                  "required": false
+                },
+                "elementType": "TEXT",
+                "id": "1686878986398",
+                "key": "identityId",
+                "validations": []
+              },
+              {
+                "config": {
+                  "columnCount": 2,
+                  "columns": [
+                    [
+                      {
+                        "config": {
+                          "default": "",
+                          "description": "",
+                          "helpText": "",
+                          "label": "Current Job Title",
+                          "placeholder": "",
+                          "required": false
+                        },
+                        "elementType": "TEXT",
+                        "id": "958707300322",
+                        "key": "currentJobTitle",
+                        "validations": []
+                      }
+                    ],
+                    [
+                      {
+                        "config": {
+                          "default": "",
+                          "description": "",
+                          "helpText": "",
+                          "label": "Previous Job Title",
+                          "placeholder": "",
+                          "required": false
+                        },
+                        "elementType": "TEXT",
+                        "id": "850566345112",
+                        "key": "previousJobTitle",
+                        "validations": []
+                      }
+                    ]
+                  ],
+                  "description": "",
+                  "label": "Column Set",
+                  "labelStyle": "h5",
+                  "showLabel": false
+                },
+                "elementType": "COLUMN_SET",
+                "id": "228451340682",
+                "key": "",
+                "validations": []
+              }
+            ],
+            "label": "Staggerd De-provisioning Form",
+            "labelStyle": "h2",
+            "showLabel": true
+          },
+          "validations": []
+        },
+        {
+          "id": "1577680332106",
+          "elementType": "SECTION",
+          "config": {
+            "alignment": "LEFT",
+            "description": "Select from this dropdown list of Roles that this user lost from their most recent identity processing (limit 30)\n\nChoose how long to extend their access for.",
+            "formElements": [
+              {
+                "config": {
+                  "columnCount": 2,
+                  "columns": [
+                    [
+                      {
+                        "config": {
+                          "dataSource": {
+                            "config": {
+                              "formInputId": "lostRoles",
+                              "sortBy": "ASC"
+                            },
+                            "dataSourceType": "FORM_INPUT"
+                          },
+                          "forceSelect": true,
+                          "helpText": "",
+                          "label": "Removed Roles List",
+                          "maximum": 30,
+                          "placeholder": "",
+                          "required": false
+                        },
+                        "elementType": "SELECT",
+                        "id": "1569615994781",
+                        "key": "extendRoles",
+                        "validations": [
+                          {
+                            "validationType": "DATA_SOURCE"
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "config": {
+                          "default": "",
+                          "description": "",
+                          "helpText": "",
+                          "label": "Number of Days",
+                          "placeholder": "",
+                          "required": true
+                        },
+                        "elementType": "TEXT",
+                        "id": "688569054245",
+                        "key": "numberOfDays",
+                        "validations": [
+                          {
+                            "config": {
+                              "message": "Please enter a valid number.",
+                              "regex": "\\d+"
+                            },
+                            "validationType": "REGEX"
+                          },
+                          {
+                            "validationType": "REQUIRED"
+                          }
+                        ]
+                      }
+                    ]
+                  ],
+                  "description": "",
+                  "label": "heading 5",
+                  "labelStyle": "h5",
+                  "showLabel": false
+                },
+                "elementType": "COLUMN_SET",
+                "id": "1418085224388",
+                "key": "",
+                "validations": []
+              },
+              {
+                "config": {
+                  "description": "<p>To process the Identity without role extension, submit this form without any input.</p>",
+                  "label": "Description Field",
+                  "showLabel": false
+                },
+                "elementType": "DESCRIPTION",
+                "id": "782695504085",
+                "key": "",
+                "validations": []
+              }
+            ],
+            "label": "Role Extension Management",
+            "labelStyle": "h5",
+            "showLabel": true
+          },
+          "validations": []
+        }
+      ],
+      "formConditions": [
+        {
+          "ruleOperator": "AND",
+          "rules": [
+            {
+              "sourceType": "INPUT",
+              "source": "Current Title",
+              "operator": "NOT_EM",
+              "valueType": "STRING",
+              "value": ""
+            }
+          ],
+          "effects": [
+            {
+              "effectType": "SET_DEFAULT_VALUE",
+              "config": {
+                "defaultValueLabel": "Current Title",
+                "element": "958707300322"
+              }
+            },
+            {
+              "effectType": "DISABLE",
+              "config": {
+                "element": "958707300322"
+              }
+            }
+          ]
+        },
+        {
+          "ruleOperator": "AND",
+          "rules": [
+            {
+              "sourceType": "INPUT",
+              "source": "Previous Title",
+              "operator": "NOT_EM",
+              "valueType": "STRING",
+              "value": ""
+            }
+          ],
+          "effects": [
+            {
+              "effectType": "SET_DEFAULT_VALUE",
+              "config": {
+                "defaultValueLabel": "Previous Title",
+                "element": "850566345112"
+              }
+            },
+            {
+              "effectType": "DISABLE",
+              "config": {
+                "element": "850566345112"
+              }
+            }
+          ]
+        },
+        {
+          "ruleOperator": "AND",
+          "rules": [
+            {
+              "sourceType": "INPUT",
+              "source": "IdenitityName",
+              "operator": "NOT_EM",
+              "valueType": "STRING",
+              "value": ""
+            }
+          ],
+          "effects": [
+            {
+              "effectType": "SET_DEFAULT_VALUE",
+              "config": {
+                "defaultValueLabel": "IdenitityName",
+                "element": "801911992153"
+              }
+            },
+            {
+              "effectType": "DISABLE",
+              "config": {
+                "element": "801911992153"
+              }
+            }
+          ]
+        },
+        {
+          "ruleOperator": "AND",
+          "rules": [
+            {
+              "sourceType": "ELEMENT",
+              "source": "extendRoles",
+              "operator": "NOT_EM",
+              "valueType": "STRING_LIST",
+              "value": []
+            }
+          ],
+          "effects": [
+            {
+              "effectType": "SHOW",
+              "config": {
+                "element": "688569054245"
+              }
+            }
+          ]
+        },
+        {
+          "ruleOperator": "AND",
+          "rules": [
+            {
+              "sourceType": "INPUT",
+              "source": "identityId",
+              "operator": "NOT_EM",
+              "valueType": "STRING",
+              "value": ""
+            }
+          ],
+          "effects": [
+            {
+              "effectType": "SET_DEFAULT_VALUE",
+              "config": {
+                "defaultValueLabel": "identityId",
+                "element": "1686878986398"
+              }
+            },
+            {
+              "effectType": "DISABLE",
+              "config": {
+                "element": "1686878986398"
+              }
+            }
+          ]
+        }
+      ],
+      "created": "2024-01-18T21:58:02.006242119Z",
+      "modified": "2024-04-15T17:42:26.729650854Z"
+    }
+  }
+]

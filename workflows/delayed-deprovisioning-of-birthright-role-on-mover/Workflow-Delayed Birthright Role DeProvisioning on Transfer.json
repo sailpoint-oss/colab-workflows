@@ -1,0 +1,289 @@
+{
+  "id": "aa11bff0-a1fa-4a65-a48d-5cd061898945",
+  "name": "Delayed Birthright Role DeProvisioning on Transfer ",
+  "description": "",
+  "definition": {
+    "start": "Get Identity History Snapshots",
+    "steps": {
+      "Any Removed Roles?": {
+        "choiceList": [
+          {
+            "comparator": "IsPresent",
+            "nextStep": "Get Identity",
+            "variableA.$": "$.getRemovedRoles.body[0].id"
+          }
+        ],
+        "defaultStep": "End Step - No Extenstions Success",
+        "type": "choice"
+      },
+      "End Step - No Extenstions Success": {
+        "displayName": "",
+        "type": "success"
+      },
+      "End Step - Success": {
+        "displayName": "",
+        "type": "success"
+      },
+      "Extended Roles?": {
+        "choiceList": [
+          {
+            "comparator": "IsPresent",
+            "nextStep": "Get Access",
+            "variableA.$": "$.form.formData.numberOfDays"
+          }
+        ],
+        "defaultStep": "End Step - No Extenstions Success",
+        "type": "choice"
+      },
+      "Form": {
+        "actionId": "sp:forms",
+        "attributes": {
+          "deadline": "2d",
+          "formDefinitionId": "3fcea1cb-fcfb-4e64-910f-16d365b26e84",
+          "inputForForm_array_lostRoles.$": "$.getRemovedRoles.body",
+          "inputForForm_array_lostRoles_label": "$.displayName",
+          "inputForForm_array_lostRoles_value": "$.id",
+          "inputForForm_currentTitle.$": "$.trigger.changes[?(@.attribute==\"jobTitle\")].newValue",
+          "inputForForm_idenitityname.$": "$.trigger.identity.name",
+          "inputForForm_identityId.$": "$.getIdentity.id",
+          "inputForForm_previousTitle.$": "$.trigger.changes[?(@.attribute==\"jobTitle\")].oldValue",
+          "notificationBody": "<p>{{$.getIdentity.managerRef.name}},</p>\n\n<p>Your direct report, {{$.getIdentity.name}} has had a job title or department change. </p>\n\n<p>Old Value(s): <br>{{$.trigger.changes[?(@.attribute ==  \"jobTitle\" || @.attribute == \"department\")].oldValue}}</p>\n\n<p>New Value(s):<br>{{$.trigger.changes[?(@.attribute ==  \"jobTitle\" || @.attribute == \"department\")].newValue}}</p>\n\nPlease use the form linked below to optionally extend their previous role access.",
+          "notificationSubject": "Job Change Staggered De-provisioning Option",
+          "recipient.$": "$.getIdentity.managerRef.id",
+          "reminder": "1d"
+        },
+        "nextStep": "Extended Roles?",
+        "type": "action",
+        "versionNumber": 1
+      },
+      "Get Access": {
+        "actionId": "sp:access:get",
+        "attributes": {
+          "accessprofiles": false,
+          "entitlements": false,
+          "getAccessBy": "searchQuery",
+          "query": "id: (\"{{$.form.formData.extendRoles[0]}}\", \"{{$.form.formData.extendRoles[1]}}\", \"{{$.form.formData.extendRoles[2]}}\", \"{{$.form.formData.extendRoles[3]}}\", \"{{$.form.formData.extendRoles[4]}}\", \"{{$.form.formData.extendRoles[5]}}\",\"{{$.form.formData.extendRoles[6]}}\",\"{{$.form.formData.extendRoles[7]}}\",\"{{$.form.formData.extendRoles[8]}}\",\"{{$.form.formData.extendRoles[9]}}\")",
+          "roles": true
+        },
+        "displayName": "",
+        "nextStep": "Send Email 1",
+        "type": "action",
+        "versionNumber": 1
+      },
+      "Get Identity": {
+        "actionId": "sp:get-identity",
+        "attributes": {
+          "id.$": "$.trigger.identity.id"
+        },
+        "nextStep": "Form",
+        "type": "action",
+        "versionNumber": 2
+      },
+      "Get Identity History Snapshots": {
+        "actionId": "sp:http",
+        "attributes": {
+          "authenticationType": "OAuth",
+          "method": "get",
+          "oAuthClientId": "%%OAUTH_CLIENT_ID%%",
+          "oAuthClientSecret": null,
+          "oAuthCredentialLocation": "oAuthInHeader",
+          "oAuthTokenUrl": "%%API_URL%%/oauth/token",
+          "url": "%%API_URL%%/beta/historical-identities/{{$.trigger.identity.id}}/snapshots",
+          "urlParams": {
+            "limit": "2"
+          }
+        },
+        "nextStep": "Get Removed Roles",
+        "type": "action",
+        "versionNumber": 2
+      },
+      "Get Removed Roles": {
+        "actionId": "sp:http",
+        "attributes": {
+          "authenticationType": "OAuth",
+          "method": "get",
+          "oAuthClientId": "%%OAUTH_CLIENT_ID%%",
+          "oAuthClientSecret": null,
+          "oAuthCredentialLocation": "oAuthInHeader",
+          "oAuthTokenUrl": "%%API_URL%%/oauth/token",
+          "url": "%%API_URL%%/beta/historical-identities/{{$.trigger.identity.id}}/compare/role?access-associated=false&snapshot1={{$.getIdentityHistorySnapshots.body[1].snapshot}}&snapshot2={{$.getIdentityHistorySnapshots.body[0].snapshot}}",
+          "urlParams": null
+        },
+        "nextStep": "Any Removed Roles?",
+        "type": "action",
+        "versionNumber": 2
+      },
+      "Loop": {
+        "actionId": "sp:loop:iterator",
+        "attributes": {
+          "context.$": "$.form.formData",
+          "input.$": "$.getAccess.accessItems",
+          "start": "Make Role Requestable",
+          "steps": {
+            "Define Days Variable": {
+              "attributes": {
+                "id": "sp:define-variable",
+                "variables": [
+                  {
+                    "description": "",
+                    "name": "Number of Days",
+                    "transforms": [
+                      {
+                        "id": "sp:transform:concatenate:string",
+                        "input": {
+                          "variableB": "d"
+                        }
+                      }
+                    ],
+                    "variableA.$": "$.loop.context.numberOfDays"
+                  }
+                ]
+              },
+              "nextStep": "Get Access to Extend",
+              "type": "Mutation"
+            },
+            "End Step — Loop Success": {
+              "description": "No Failed Access Requests Present in the response.",
+              "type": "success"
+            },
+            "Extend Access": {
+              "actionId": "sp:access:manage",
+              "attributes": {
+                "addIdentities.$": "$.loop.context.identityId",
+                "comments": "Access To Old Role Is being Extended for  {{$.loop.context.numberOfDays}} Days",
+                "removeDuration.$": "$.defineDaysVariable.numberOfDays",
+                "removeIdentity.$": "$.trigger.identity.id",
+                "requestType": "GRANT_ACCESS",
+                "requestedItems.$": "$.getAccessToExtend.accessItems[*]"
+              },
+              "displayName": "",
+              "nextStep": "Make Role Unrequestable",
+              "type": "action",
+              "versionNumber": 1
+            },
+            "Get Access to Extend": {
+              "actionId": "sp:access:get",
+              "attributes": {
+                "accessprofiles": false,
+                "entitlements": false,
+                "getAccessBy": "searchQuery",
+                "query": "id: {{$.loop.loopInput.id}}",
+                "roles": true
+              },
+              "nextStep": "Extend Access",
+              "type": "action",
+              "versionNumber": 1
+            },
+            "Make Role Requestable": {
+              "actionId": "sp:http",
+              "attributes": {
+                "authenticationType": "OAuth",
+                "jsonPatchRequestBody": [
+                  {
+                    "op": "replace",
+                    "path": "/requestable",
+                    "value": true
+                  }
+                ],
+                "method": "patch",
+                "oAuthClientId": "%%OAUTH_CLIENT_ID%%",
+                "oAuthClientSecret": null,
+                "oAuthCredentialLocation": "oAuthInHeader",
+                "oAuthTokenUrl": "%%API_URL%%/oauth/token",
+                "requestContentType": "json-patch+json",
+                "url": "%%API_URL%%/beta/roles/{{$.loop.loopInput.id}}",
+                "urlParams": null
+              },
+              "displayName": "",
+              "nextStep": "Define Days Variable",
+              "type": "action",
+              "versionNumber": 2
+            },
+            "Make Role Unrequestable": {
+              "actionId": "sp:http",
+              "attributes": {
+                "authenticationType": "OAuth",
+                "jsonPatchRequestBody": [
+                  {
+                    "op": "replace",
+                    "path": "/requestable",
+                    "value": false
+                  }
+                ],
+                "method": "patch",
+                "oAuthClientId": "%%OAUTH_CLIENT_ID%%",
+                "oAuthClientSecret": null,
+                "oAuthCredentialLocation": "oAuthInHeader",
+                "oAuthTokenUrl": "%%API_URL%%/oauth/token",
+                "requestContentType": "json-patch+json",
+                "url": "%%API_URL%%/beta/roles/{{$.loop.loopInput.id}}",
+                "urlParams": null
+              },
+              "displayName": "",
+              "nextStep": "Verify Data Type",
+              "type": "action",
+              "versionNumber": 2
+            },
+            "Send Email": {
+              "actionId": "sp:send-email",
+              "attributes": {
+                "body": "$.extendAccess.failedAccessRequests",
+                "context": {},
+                "recipientEmailList": [
+                  "%%ADMIN_EMAIL%%"
+                ],
+                "subject": "Failed Role Extension"
+              },
+              "displayName": "",
+              "nextStep": "End Step — Loop Success",
+              "type": "action",
+              "versionNumber": 2
+            },
+            "Verify Data Type": {
+              "choiceList": [
+                {
+                  "comparator": "IsPresent",
+                  "nextStep": "Send Email",
+                  "variableA.$": "$.extendAccess.failedAccessRequests"
+                }
+              ],
+              "defaultStep": "End Step — Loop Success",
+              "description": null,
+              "type": "choice"
+            }
+          }
+        },
+        "description": null,
+        "displayName": "",
+        "nextStep": "End Step - Success",
+        "type": "action",
+        "versionNumber": 1
+      },
+      "Send Email 1": {
+        "actionId": "sp:send-email",
+        "attributes": {
+          "body": "<p>Hello {{$.getIdentity.attributes.firstname}},</p>\n\n<p>Your manager, {{$.getIdentity.managerRef.name}}, has approved an extension of the access roles listed below for a period of <b>{{$.form.formData.numberOfDays}} days</b>, to allow you to complete any lingering deliverables.</p> <p>The following roles have been extended: </p> <p>{{$.getAccess.accessItems[*].name}}.</p>",
+          "context": {},
+          "from": "IdentitySecurityCloudAdministration@sailpoint.com",
+          "recipientEmailList.$": "$.getIdentity.emailAddress",
+          "replyTo.$": "",
+          "subject": "Extended Role(s) have been approved."
+        },
+        "displayName": "",
+        "nextStep": "Loop",
+        "type": "action",
+        "versionNumber": 2
+      }
+    }
+  },
+  "enabled": true,
+  "executionCount": 6,
+  "failureCount": 1,
+  "trigger": {
+    "type": "EVENT",
+    "attributes": {
+      "filter.$": "$.changes[?(@.attribute == \"jobTitle\" || @.attribute == \"department\")]",
+      "id": "idn:identity-attributes-changed"
+    }
+  }
+}

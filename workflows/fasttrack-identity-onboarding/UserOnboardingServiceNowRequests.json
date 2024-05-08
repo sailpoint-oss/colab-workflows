@@ -1,0 +1,490 @@
+{
+	"name": "User Onboarding Service Now Requests",
+	"description": "User Onboarding Service Now Requests",
+	"definition": {
+		"start": "Get Identity",
+		"steps": {
+			"Compare Numbers": {
+				"choiceList": [
+					{
+						"comparator": "NumericEquals",
+						"nextStep": "Send Email",
+						"variableA.$": "$.manageServiceNowTicket.statusCode",
+						"variableB": 201
+					}
+				],
+				"defaultStep": "Send Email 3",
+				"description": "Check Manage Service Now Ticket action completed successfully",
+				"type": "choice"
+			},
+			"Compare Strings": {
+				"choiceList": [
+					{
+						"comparator": "StringEquals",
+						"nextStep": "Send Email 1",
+						"variableA.$": "$.manageServiceNowTicket1.body.result[?(@.task_effective_number=='{{$.manageServiceNowTicket.body.result.task_effective_number}}')].request_state",
+						"variableB": "closed_complete"
+					}
+				],
+				"defaultStep": "Send Email 2",
+				"description": null,
+				"type": "choice"
+			},
+			"Compare Strings 1": {
+				"choiceList": [
+					{
+						"comparator": "StringEquals",
+						"nextStep": "Manage ServiceNow Ticket 2",
+						"variableA.$": "$.trigger.formData.preferredLaptop",
+						"variableB": "Windows"
+					}
+				],
+				"defaultStep": "Compare Strings 2",
+				"description": "Windows Laptop",
+				"displayName": "",
+				"type": "choice"
+			},
+			"Compare Strings 2": {
+				"choiceList": [
+					{
+						"comparator": "StringEquals",
+						"nextStep": "Manage ServiceNow Ticket 3",
+						"variableA.$": "$.trigger.formData.preferredLaptop",
+						"variableB": "Linux"
+					}
+				],
+				"defaultStep": "Manage ServiceNow Ticket",
+				"description": "Linux Laptop",
+				"displayName": "",
+				"type": "choice"
+			},
+			"Define Variable": {
+				"attributes": {
+					"id": "sp:define-variable",
+					"variables": [
+						{
+							"description": "Calculate Ticket Due Date",
+							"name": "ticketDueDate",
+							"transforms": [
+								{
+									"id": "sp:transform:substring:string",
+									"input": {
+										"length": 10,
+										"start": 0
+									}
+								}
+							],
+							"variableA.$": "$.now()"
+						}
+					]
+				},
+				"displayName": "",
+				"nextStep": "Get Accounts",
+				"type": "Mutation"
+			},
+			"Define Variable 1": {
+				"attributes": {
+					"id": "sp:define-variable",
+					"variables": [
+						{
+							"description": "Account ID",
+							"name": "accountID",
+							"transforms": [
+								{
+									"id": "sp:transform:substring:string",
+									"input": {
+										"length": 32,
+										"start": 0
+									}
+								}
+							],
+							"variableA.$": "$.getAccounts.accounts[?(@.attributes.name=='{{$.trigger.formData.employeeName}}')].nativeIdentity"
+						}
+					]
+				},
+				"displayName": "",
+				"nextStep": "Define Variable 2",
+				"type": "Mutation"
+			},
+			"Define Variable 2": {
+				"attributes": {
+					"id": "sp:define-variable",
+					"variables": [
+						{
+							"description": "Adobe Acrobat",
+							"name": "acrobatFlag",
+							"transforms": [
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "true",
+										"replacement": "Yes"
+									}
+								},
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "false",
+										"replacement": "No"
+									}
+								}
+							],
+							"variableA": "{{$.trigger.formData.acrobat}}"
+						},
+						{
+							"description": "Eclipse Flag",
+							"name": "eclipseFlag",
+							"transforms": [
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "true",
+										"replacement": "Yes"
+									}
+								},
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "false",
+										"replacement": "No"
+									}
+								}
+							],
+							"variableA": "{{$.trigger.formData.eclipse}}"
+						},
+						{
+							"description": "Oracle Flag",
+							"name": "oracleFlag",
+							"transforms": [
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "true",
+										"replacement": "Yes"
+									}
+								},
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "false",
+										"replacement": "No"
+									}
+								}
+							],
+							"variableA": "{{$.trigger.formData.oracle}}"
+						},
+						{
+							"description": "Adobe Photoshop Flag",
+							"name": "photoshopFlag",
+							"transforms": [
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "true",
+										"replacement": "Yes"
+									}
+								},
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "false",
+										"replacement": "No"
+									}
+								}
+							],
+							"variableA": "{{$.trigger.formData.photoshop}}"
+						},
+						{
+							"description": "MS Powerpoint Flag",
+							"name": "powerpointFlag",
+							"transforms": [
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "true",
+										"replacement": "Yes"
+									}
+								},
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "false",
+										"replacement": "No"
+									}
+								}
+							],
+							"variableA": "{{$.trigger.formData.powerpoint}}"
+						},
+						{
+							"description": "Siebel Flag",
+							"name": "siebelFlag",
+							"transforms": [
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "true",
+										"replacement": "Yes"
+									}
+								},
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "false",
+										"replacement": "No"
+									}
+								}
+							],
+							"variableA": "{{$.trigger.formData.siebel}}"
+						},
+						{
+							"description": "Laptop Price",
+							"name": "laptopPrice",
+							"transforms": [
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "Windows",
+										"replacement": "950"
+									}
+								},
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "Linux",
+										"replacement": "800"
+									}
+								},
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "Mac",
+										"replacement": "1800"
+									}
+								},
+								{
+									"id": "sp:transform:replace:string",
+									"input": {
+										"pattern": "Chromebook",
+										"replacement": "500"
+									}
+								}
+							],
+							"variableA": "{{$.trigger.formData.preferredLaptop}}"
+						}
+					]
+				},
+				"displayName": "",
+				"nextStep": "Compare Strings 1",
+				"type": "Mutation"
+			},
+			"End Step — Success": {
+				"description": "Request Success",
+				"type": "success"
+			},
+			"End Step — Success 1": {
+				"type": "success"
+			},
+			"End Step — Success 2": {
+				"type": "success"
+			},
+			"Get Accounts": {
+				"actionId": "sp:get-accounts",
+				"attributes": {
+					"filterCriteria": "sourceId",
+					"getAccountsBy": "filters",
+					"identity": "308c97e4c41c47fd9ab23fa879fa14ab",
+					"operator": "eq",
+					"value": "4bce9ea74776402aa3e2dd42d3160d31"
+				},
+				"description": "Get Service Now Accounts",
+				"displayName": "",
+				"nextStep": "Define Variable 1",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Get Identity": {
+				"actionId": "sp:get-identity",
+				"attributes": {
+					"id.$": "$.trigger.submittedBy.id"
+				},
+				"description": "Get User's Manager",
+				"nextStep": "Define Variable",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Manage ServiceNow Ticket": {
+				"actionId": "sp:snow",
+				"attributes": {
+					"action": "create",
+					"authenticationType": "basic",
+					"basicAuthPassword": "",
+					"basicAuthUserName": "admin",
+					"caller": "admin",
+					"customFields": "requested_for:{{$.defineVariable1.accountID}}\nassignment_group:Hardware\ndue_date:{{$.defineVariable.ticketDueDate}}\ncomments:New Ticket for provisioning user Hardware\nspecial_instructions:Preferred Laptop - {{$.trigger.formData.preferredLaptop}}, {{$.trigger.formData.additionalRequests}}, Adobe Acrobat - {{$.defineVariable2.acrobatFlag}}, Adobe Photoshop - {{$.defineVariable2.photoshopFlag}}, Siebel Client - {{$.defineVariable2.siebelFlag}}, Oracle - {{$.defineVariable2.oracleFlag}}, Eclipse IDE - {{$.defineVariable2.eclipseFlag}}, Microsoft Powerpoint - {{$.defineVariable2.powerpointFlag}}\nprice:{{$.defineVariable2.laptopPrice}}\nlocation:1e3c49b037d0200044e0bfc8bcbe5dd7",
+					"description": "Please provision Hardware for the user with Employee Number - {{$.trigger.formData.employeeNumber}}",
+					"shortDescription": "New User {{$.trigger.formData.employeeName}} created in Sailpoint IDN",
+					"subCategory": "",
+					"urgency": "2",
+					"url": "https://tenant.service-now.com/api/now/v1/table/sc_request",
+					"watchlist": "admin"
+				},
+				"description": "Create a Service Now Request for Hardware",
+				"nextStep": "Wait",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Manage ServiceNow Ticket 1": {
+				"actionId": "sp:snow",
+				"attributes": {
+					"action": "get",
+					"authenticationType": "basic",
+					"basicAuthPassword": "",
+					"basicAuthUserName": "admin",
+					"ticket": "{{$.manageServiceNowTicket.body.result.task_effective_number}}",
+					"url": "https://tenant.service-now.com/api/now/v1/table/sc_request?sysparm_query="
+				},
+				"description": "Check Ticket Status",
+				"nextStep": "Compare Strings",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Manage ServiceNow Ticket 2": {
+				"actionId": "sp:snow",
+				"attributes": {
+					"action": "create",
+					"authenticationType": "basic",
+					"basicAuthPassword": "",
+					"basicAuthUserName": "admin",
+					"caller": "admin",
+					"customFields": "requested_for:{{$.defineVariable1.accountID}}\nassignment_group:Windows Hardware Support\ndue_date:{{$.defineVariable.ticketDueDate}}\ncomments:New Ticket for provisioning user Hardware\nspecial_instructions:Preferred Laptop - {{$.trigger.formData.preferredLaptop}}, OS - {{$.trigger.formData.windowsOsVersion}}, {{$.trigger.formData.additionalRequests}}, Adobe Acrobat - {{$.defineVariable2.acrobatFlag}}, Adobe Photoshop - {{$.defineVariable2.photoshopFlag}}, Siebel Client - {{$.defineVariable2.siebelFlag}}, Oracle - {{$.defineVariable2.oracleFlag}}, Eclipse IDE - {{$.defineVariable2.eclipseFlag}}, Microsoft Powerpoint - {{$.defineVariable2.powerpointFlag}}\nprice:{{$.defineVariable2.laptopPrice}}\nlocation:1e3c49b037d0200044e0bfc8bcbe5dd7",
+					"description": "Please provision Hardware for the user with Employee Number - {{$.trigger.formData.employeeNumber}}",
+					"shortDescription": "New User {{$.trigger.formData.employeeName}} created in Sailpoint IDN",
+					"subCategory": null,
+					"urgency": "2",
+					"url": "https://tenant.service-now.com/api/now/v1/table/sc_request",
+					"watchlist": "admin"
+				},
+				"description": "Create a Service Now Request for Hardware",
+				"displayName": "",
+				"nextStep": "Wait",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Manage ServiceNow Ticket 3": {
+				"actionId": "sp:snow",
+				"attributes": {
+					"action": "create",
+					"authenticationType": "basic",
+					"basicAuthPassword": "",
+					"basicAuthUserName": "admin",
+					"caller": "admin",
+					"customFields": "requested_for:{{$.defineVariable1.accountID}}\nassignment_group:Hardware\ndue_date:{{$.defineVariable.ticketDueDate}}\ncomments:New Ticket for provisioning user Hardware\nspecial_instructions:Preferred Laptop - {{$.trigger.formData.preferredLaptop}}, OS - {{$.trigger.formData.linuxOs}}, {{$.trigger.formData.additionalRequests}}, Adobe Acrobat - {{$.defineVariable2.acrobatFlag}}, Adobe Photoshop - {{$.defineVariable2.photoshopFlag}}, Siebel Client - {{$.defineVariable2.siebelFlag}}, Oracle - {{$.defineVariable2.oracleFlag}}, Eclipse IDE - {{$.defineVariable2.eclipseFlag}}, Microsoft Powerpoint - {{$.defineVariable2.powerpointFlag}}\nprice:{{$.defineVariable2.laptopPrice}}\nlocation:1e3c49b037d0200044e0bfc8bcbe5dd7",
+					"description": "Please provision Hardware for the user with Employee Number - {{$.trigger.formData.employeeNumber}}",
+					"shortDescription": "New User {{$.trigger.formData.employeeName}} created in Sailpoint IDN",
+					"subCategory": "",
+					"urgency": "2",
+					"url": "https://tenant.service-now.com/api/now/v1/table/sc_request",
+					"watchlist": "admin"
+				},
+				"description": "Create a Service Now Request for Hardware",
+				"displayName": "",
+				"nextStep": "Wait",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Send Email": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Hi,<br/><br/>\nService Now Ticket for user ${displayName} has been created successfully. \n<br/><br/>\nThe Ticket Number is ${ticketNumber}.\n<br/><br/>\nThanks,<br/>\nYour IAM Team",
+					"context": {
+						"displayName.$": "$.trigger.formData.employeeName",
+						"ticketNumber.$": "$.manageServiceNowTicket.body.result.task_effective_number"
+					},
+					"recipientEmailList.$": "$.getIdentity.attributes.email",
+					"subject": "Service Now Ticket {{$.manageServiceNowTicket.body.result.task_effective_number}} Created"
+				},
+				"description": "Notify Manager about Service Now Ticket Creation",
+				"nextStep": "Wait 1",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email 1": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Service Now Ticket ${ticketNumber} for user ${displayName} is now Closed.\n<br/><br/>\nPlease note that Hardware provisioning for new user is now complete.\n<br/><br/>\nThanks,<br/>\nIAM Team",
+					"context": {
+						"displayName.$": "$.trigger.formData.employeeName",
+						"ticketNumber.$": "$.manageServiceNowTicket.body.result.task_effective_number"
+					},
+					"recipientEmailList.$": "$.getIdentity.attributes.email",
+					"subject": "Service Now Ticket {{$.manageServiceNowTicket.body.result.task_effective_number}} Closed"
+				},
+				"description": "Notify Manager of Service Now Ticket Completetion",
+				"nextStep": "End Step — Success",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email 2": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Hi,<br/><br/>\nService Now Ticket ${ticketNumber} for user ${displayName} is ${status}.\n<br/><br/>\nPlease check with Hardware Team if provisioning is completed.<br/><br/>\nThanks,<br/>\nYour IAM Team",
+					"context": {
+						"displayName.$": "$.trigger.formData.employeeName",
+						"status.$": "$.manageServiceNowTicket1.body.result[?(@.task_effective_number=='{{$.manageServiceNowTicket.body.result.task_effective_number}}')].request_state",
+						"ticketNumber.$": "$.manageServiceNowTicket.body.result.task_effective_number"
+					},
+					"recipientEmailList.$": "$.getIdentity.attributes.email",
+					"subject": "Service Now Ticket {{$.manageServiceNowTicket.body.result.task_effective_number}} Status"
+				},
+				"description": "Notify Manager about Service Now Ticket Status",
+				"nextStep": "End Step — Success 2",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email 3": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Hi,<br/><br/>\nService Now Ticket creation for user ${displayName} has failed. \n<br/><br/>\nPlease create provisioning request with Hardware Team from Service Now.\n<br/><br/>\nThanks,<br/>\nYour IAM Team",
+					"context": {
+						"displayName.$": "$.trigger.formData.employeeName"
+					},
+					"recipientEmailList.$": "$.getIdentity.attributes.email",
+					"subject": "Service Now Ticket Creation Failure"
+				},
+				"description": "Notify Manager about Service Now Ticket Creation Failure",
+				"nextStep": "End Step — Success 1",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Wait": {
+				"actionId": "sp:sleep",
+				"attributes": {
+					"duration": "1m",
+					"type": "waitFor"
+				},
+				"description": "Wait for Service Now Ticket Creation",
+				"nextStep": "Compare Numbers",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Wait 1": {
+				"actionId": "sp:sleep",
+				"attributes": {
+					"duration": "1m",
+					"type": "waitFor"
+				},
+				"description": "Wait for a few days to check Ticket Status",
+				"nextStep": "Manage ServiceNow Ticket 1",
+				"type": "action",
+				"versionNumber": 1
+			}
+		}
+	},
+	"trigger": {
+		"type": "EVENT",
+		"attributes": {
+			"description": "User Onboarding Form Submitted",
+			"id": "sp:form-submitted"
+		}
+	}
+}

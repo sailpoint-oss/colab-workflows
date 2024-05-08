@@ -1,0 +1,85 @@
+{
+	"name": "User Onboarding Assign Roles",
+	"description": "User Onboarding Assign Roles to a user via Forms Selection",
+	"definition": {
+		"start": "Verify Data Type",
+		"steps": {
+			"End Step — Success": {
+				"type": "success"
+			},
+			"Get Identity": {
+				"actionId": "sp:get-identity",
+				"attributes": {
+					"id.$": "$.getListOfIdentities.identities[0].id"
+				},
+				"nextStep": "Loop",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Get List of Identities": {
+				"actionId": "sp:get-identities",
+				"attributes": {
+					"inputQuery": "attributes.identificationNumber.exact:{{$.trigger.formData.employeeNumber}}",
+					"searchBy": "searchQuery"
+				},
+				"nextStep": "Get Identity",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Loop": {
+				"actionId": "sp:loop:iterator",
+				"attributes": {
+					"context.$": "$.getIdentity",
+					"input.$": "$.trigger.formData.roles",
+					"start": "Manage Access",
+					"steps": {
+						"End Step — Success 1": {
+							"type": "success"
+						},
+						"Manage Access": {
+							"actionId": "sp:access:manage",
+							"attributes": {
+								"addIdentities.$": "$.loop.context.id",
+								"comments": "Providing additional access as requested by manager",
+								"removeIdentity.$": "$.getIdentity.id",
+								"requestType": "GRANT_ACCESS",
+								"requestedItems": [
+									{
+										"id": "{{$.loop.loopInput}}",
+										"type": "ROLE"
+									}
+								]
+							},
+							"nextStep": "End Step — Success 1",
+							"type": "action",
+							"versionNumber": 1
+						}
+					}
+				},
+				"nextStep": "End Step — Success",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Verify Data Type": {
+				"choiceList": [
+					{
+						"comparator": "IsPresent",
+						"nextStep": "Get List of Identities",
+						"variableA.$": "$.trigger.formData.roles"
+					}
+				],
+				"defaultStep": "End Step — Success",
+				"description": "Verify Roles have been selected by manager",
+				"displayName": "",
+				"type": "choice"
+			}
+		}
+	},	
+	"trigger": {
+		"type": "EVENT",
+		"attributes": {
+			"formDefinitionId": "5e1810c7-cf38-4d1a-bedf-e6326248840f",
+			"id": "sp:form-submitted"
+		}
+	}
+}

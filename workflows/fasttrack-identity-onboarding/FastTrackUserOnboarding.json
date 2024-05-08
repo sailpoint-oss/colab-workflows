@@ -1,0 +1,120 @@
+{
+	"name": "Fast Track User Onboarding",
+	"description": "Fast Track User Onboarding Workflow",
+	"definition": {
+		"start": "Wait",
+		"steps": {
+			"Define Variable": {
+				"attributes": {
+					"id": "sp:define-variable",
+					"variables": [
+						{
+							"description": "Start Date",
+							"name": "Start Date",
+							"transforms": [
+								{
+									"id": "sp:transform:substring:string",
+									"input": {
+										"length": 10,
+										"start": 0
+									}
+								}
+							],
+							"variableA.$": "$.form.formData.startDate"
+						}
+					]
+				},
+				"nextStep": "Send Email",
+				"type": "Mutation"
+			},
+			"End Step — Success": {
+				"type": "success"
+			},
+			"Form": {
+				"actionId": "sp:forms",
+				"attributes": {
+					"deadline": "7d",
+					"formDefinitionId": "5e1810c7-cf38-4d1a-bedf-e6326248840f",
+					"inputForForm_email.$": "$.trigger.attributes.email",
+					"inputForForm_employeeName.$": "$.trigger.attributes.displayName",
+					"inputForForm_employeeNumber.$": "$.trigger.attributes.employeeNumber",
+					"inputForForm_phone.$": "$.trigger.attributes.phone",
+					"inputForForm_startDate.$": "$.trigger.attributes.startDate",
+					"inputForForm_userType": "true",
+					"notificationBody": "Hello,<br/>Please fill out the form below for <b>{{$.trigger.identity.name}}</b>. It includes the additional information required by IT for hardware procurement.<br/><br/>Regards,<br/>IT Team",
+					"notificationSubject": "ATTN : Please fill in onboarding information for - {{$.$.trigger.attributes.displayName}}",
+					"recipient.$": "$.trigger.attributes.manager.id",
+					"reminder": "2d",
+					"reminderBody": "Hello,<br/>Please fill out the form below for <b>{{$.trigger.identity.name}}</b>. It includes the additional information required by IT for hardware procurement.<br/><br/>Regards,<br/>IT Team"
+				},
+				"description": "User Onboarding form",
+				"nextStep": "Get Identity",
+				"type": "action",
+				"versionNumber": 1
+			},
+			"Get Identity": {
+				"actionId": "sp:get-identity",
+				"attributes": {
+					"id.$": "$.trigger.attributes.manager.id"
+				},
+				"description": "Get Identity Manager",
+				"nextStep": "Define Variable",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Hi,<br/><br/>\nThank you for filing out the Additional Information for user <b>${employeeName}</b>.<br/><br/>\n<b>Personal Details</b><br/>\nEmployee Name - ${employeeName}<br/>\nEmployee Number - ${employeeNumber}<br/>\nUser Type - #if( ${userType} == 'true')Full Time#{else}Part Time#end<br/>\nPhone - ${phone}<br/>\nEmail - ${email}<br/>\nStart Date - ${startDate}<br/><br/>\n<b>Location</b><br/>\nLocation - ${location}<br/>\n#if(${city})<br/>City - ${city}<br/>#end\n<br/><b>IT Requests</b><br/>\nPreferred Laptop - ${preferredLaptop}<br/>\n#if($preferredLaptop == 'Windows')Windows OS - ${windowsOsVersion}<br/>#end\n#if($preferredLaptop == 'Linux')Linux OS - ${linuxOs}<br/>#end<br/>\n<b>Require Access to Applications : </b><br/>\nSiebel Client - #if( ${siebel} == 'true')Yes#{else}No#end<br/>\nOracle - #if( ${oracle} == 'true')Yes#{else}No#end<br/>\nEclipse IDE - #if( ${eclipse} == 'true')Yes#{else}No#end<br/>\nAdobe Acrobat - #if( ${acrobat} == 'true')Yes#{else}No#end<br/>\nAdobe Photoshop - #if( ${photoshop} == 'true')Yes#{else}No#end<br/>\nMicrosoft Powerpoint - #if( ${powerpoint} == 'true')Yes#{else}No#end<br/>\nAdditional Requests - #if($additionalRequests)${additionalRequests}#{else}None#end<br/><br/>\n<b>Additional Roles Requested</b>: \n#if($roles)Yes#{else}No#end<br/><br/>\nThank you,<br/>\nIAM Team<br/>",
+					"context": {
+						"acrobat.$": "$.form.formData.acrobat",
+						"additionalRequests.$": "$.form.formData.additionalRequests",
+						"city.$": "$.form.formData.city",
+						"eclipse.$": "$.form.formData.eclipse",
+						"email.$": "$.form.formData.email",
+						"employeeName.$": "$.form.formData.employeeName",
+						"employeeNumber.$": "$.form.formData.employeeNumber",
+						"linuxOs.$": "$.form.formData.linuxOs",
+						"location.$": "$.form.formData.location",
+						"oracle.$": "$.form.formData.oracle",
+						"phone.$": "$.form.formData.phone",
+						"photoshop.$": "$.form.formData.photoshop",
+						"powerpoint.$": "$.form.formData.powerpoint",
+						"preferredLaptop.$": "$.form.formData.preferredLaptop",
+						"roles.$": "$.form.formData.roles",
+						"siebel.$": "$.form.formData.siebel",
+						"startDate.$": "$.defineVariable.startDate",
+						"userType.$": "$.form.formData.userType",
+						"windowsOsVersion.$": "$.form.formData.windowsOsVersion"
+					},
+					"from": null,
+					"recipientEmailList.$": "$.getIdentity.attributes.email",
+					"replyTo.$": "",
+					"subject": "User Onboarding Form Submission Complete"
+				},
+				"description": "Send Email Notification To Manager",
+				"nextStep": "End Step — Success",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Wait": {
+				"actionId": "sp:sleep",
+				"attributes": {
+					"duration": "1m",
+					"type": "waitFor"
+				},
+				"displayName": "",
+				"nextStep": "Form",
+				"type": "action",
+				"versionNumber": 1
+			}
+		}
+	},	
+	"trigger": {
+		"type": "EVENT",
+		"attributes": {
+			"description": "Identity Created",
+			"id": "idn:identity-created"
+		}
+	}
+}

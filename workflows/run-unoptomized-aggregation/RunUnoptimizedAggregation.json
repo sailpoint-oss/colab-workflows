@@ -10,7 +10,7 @@
 						"comparator": "NumericEquals",
 						"nextStep": "Send Email",
 						"variableA.$": "$.hTTPRequest.statusCode",
-						"variableB": 200
+						"variableB": 202
 					}
 				],
 				"defaultStep": "Send Email 1",
@@ -27,7 +27,7 @@
 					"oAuthCredentialLocation": "oAuthInHeader",
 					"oAuthTokenUrl": "https://tenant.api.identitynow-demo.com/oauth/token",
 					"requestContentType": "form",
-					"url": "https://tenant.api.identitynow-demo.com/cc/api/source/loadAccounts/XXXXX"
+					"url": "https://tenant.api.identitynow.com/beta/sources/:id/load-accounts"
 				},
 				"description": "Run unoptimized aggregation",
 				"nextStep": "Compare Numbers",

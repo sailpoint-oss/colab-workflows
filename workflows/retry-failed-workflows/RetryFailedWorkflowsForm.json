@@ -1,0 +1,149 @@
+{
+    "name": "Retry Failed Workflows",
+    "description": "Submitting this form will invoke a workflow that retries all failed executions of a workflow between the given start and end dates.",
+    "owner": {
+        "type": "IDENTITY",
+        "id": "2c9180867624cbd7017642d8c8c81f67"
+    },
+    "usedBy": [
+        {
+            "type": "MySailPoint",
+            "id": "MySailPoint"
+        }
+    ],
+    "formInput": [],
+    "formElements": [
+        {
+            "id": "782165236468",
+            "elementType": "SECTION",
+            "config": {
+                "alignment": "LEFT",
+                "description": "Use this form to start a workflow that will retry failed workflows after the specified date.",
+                "formElements": [
+                    {
+                        "config": {
+                            "default": "",
+                            "description": "",
+                            "helpText": "The GUID of the Workflow that you want to retry failed executions for. You can find the GUID of the workflow by editing the workflow and copying the GUID from the URL.",
+                            "label": "Workflow ID",
+                            "placeholder": "5a6fc60d-dc1d-4dc5-867a-e2b6fc48fe75",
+                            "required": true
+                        },
+                        "elementType": "TEXT",
+                        "id": "435495107140",
+                        "key": "workflowId",
+                        "validations": [
+                            {
+                                "validationType": "REQUIRED"
+                            },
+                            {
+                                "config": {
+                                    "message": "The provided GUID does not match the correct format.",
+                                    "regex": "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$"
+                                },
+                                "validationType": "REGEX"
+                            }
+                        ]
+                    },
+                    {
+                        "config": {
+                            "default": "",
+                            "description": "",
+                            "helpText": "Retry all Workflow executions that have a start date after this date and have a \"Failed\" status.",
+                            "label": "Start Date",
+                            "placeholder": "",
+                            "required": true
+                        },
+                        "elementType": "DATE",
+                        "id": "1548789542068",
+                        "key": "startDate",
+                        "validations": [
+                            {
+                                "validationType": "DATE"
+                            },
+                            {
+                                "validationType": "REQUIRED"
+                            }
+                        ]
+                    },
+                    {
+                        "config": {
+                            "default": "",
+                            "description": "",
+                            "helpText": "Retry all Workflow executions that have a start time after this time and have a \"Failed\" status. You must use the following format: hh:mm:ss.",
+                            "label": "Start Time",
+                            "placeholder": "13:16:24",
+                            "required": true
+                        },
+                        "elementType": "TEXT",
+                        "id": "1632388912248",
+                        "key": "startTime",
+                        "validations": [
+                            {
+                                "config": {
+                                    "message": "The time must be in the format hh:mm:ss (ex. 14:21:12)",
+                                    "regex": "^[0-9]{2}:[0-9]{2}:[0-9]{2}$"
+                                },
+                                "validationType": "REGEX"
+                            },
+                            {
+                                "validationType": "REQUIRED"
+                            }
+                        ]
+                    },
+                    {
+                        "config": {
+                            "default": "",
+                            "description": "",
+                            "helpText": "Retry all Workflow executions that have a start date before this date and have a \"Failed\" status.",
+                            "label": "End Date",
+                            "placeholder": "",
+                            "required": true
+                        },
+                        "elementType": "DATE",
+                        "id": "553201486640",
+                        "key": "endDate",
+                        "validations": [
+                            {
+                                "validationType": "DATE"
+                            },
+                            {
+                                "validationType": "REQUIRED"
+                            }
+                        ]
+                    },
+                    {
+                        "config": {
+                            "default": "",
+                            "description": "",
+                            "helpText": "Retry all Workflow executions that have a start time before this time and have a \"Failed\" status. You must use the following format: hh:mm:ss.",
+                            "label": "End Time",
+                            "placeholder": "13:16:24",
+                            "required": true
+                        },
+                        "elementType": "TEXT",
+                        "id": "98892330667",
+                        "key": "endTime",
+                        "validations": [
+                            {
+                                "config": {
+                                    "message": "The time must be in the format hh:mm:ss (ex. 14:21:12)",
+                                    "regex": "^[0-9]{2}:[0-9]{2}:[0-9]{2}$"
+                                },
+                                "validationType": "REGEX"
+                            },
+                            {
+                                "validationType": "REQUIRED"
+                            }
+                        ]
+                    }
+                ],
+                "label": "Retry Failed Workflows",
+                "labelStyle": "h2",
+                "showLabel": true
+            },
+            "validations": []
+        }
+    ],
+    "formConditions": []
+}

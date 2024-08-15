@@ -1,0 +1,108 @@
+{
+	"name": "Retry Failed Workflows: Form Handler",
+	"description": "This workflow listens for the Retry Workflows Form to be submitted. It will then invoke the recursive retry workflow to process the failed executions.",	
+	"definition": {
+		"start": "Get Identity",
+		"steps": {
+			"Define Variable": {
+				"attributes": {
+					"id": "sp:define-variable",
+					"variables": [
+						{
+							"description": "",
+							"name": "startDate",
+							"transforms": [
+								{
+									"id": "sp:transform:substring:string",
+									"input": {
+										"length": 10,
+										"start": 0
+									}
+								}
+							],
+							"variableA.$": "$.trigger.formData.startDate"
+						},
+						{
+							"description": "",
+							"name": "endDate",
+							"transforms": [
+								{
+									"id": "sp:transform:substring:string",
+									"input": {
+										"length": 10,
+										"start": 0
+									}
+								}
+							],
+							"variableA.$": "$.trigger.formData.endDate"
+						}
+					]
+				},
+				"displayName": "",
+				"nextStep": "HTTP Request",
+				"type": "Mutation"
+			},
+			"End Step - Success": {
+				"displayName": "",
+				"type": "success"
+			},
+			"Get Identity": {
+				"actionId": "sp:get-identity",
+				"attributes": {
+					"id.$": "$.trigger.submittedBy.id"
+				},
+				"description": "Get the email of the form submitter so they can be notified when the processing of failed executions starts.",
+				"displayName": "Get Email of Form Submitter",
+				"nextStep": "Define Variable",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonRequestBody": {
+						"email": "{{$.getIdentity.attributes.email}}",
+						"end": "{{$.defineVariable.endDate}}T{{$.trigger.formData.endTime}}Z",
+						"start": "{{$.defineVariable.startDate}}T{{$.trigger.formData.startTime}}Z",
+						"workflowId": "{{$.trigger.formData.workflowId}}"
+					},
+					"method": "post",
+					"oAuthClientId": "128f6d07-8b68-468c-be14-876648c2c12d",
+					"oAuthClientSecret": "$.secrets.dd3a3a87-281d-4feb-897a-10ac94320b45",
+					"oAuthTokenUrl": "https://devrel.api.identitynow.com/oauth/token",
+					"requestContentType": "json",
+					"url": "https://devrel.api.identitynow.com/beta/workflows/execute/external/ba067050-3a26-4bda-995d-55717da4ebeb"
+				},
+				"description": "Invoke the recursive workflow to retry all failed executions for the given workflow within the start and end date.",
+				"displayName": "Start Processing",
+				"nextStep": "Send Email",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"Send Email": {
+				"actionId": "sp:send-email",
+				"attributes": {
+					"body": "Your request to retry failed workflows for workflow {{$.trigger.formData.workflowId}} between the dates {{$.defineVariable.startDate}}T{{$.trigger.formData.startTime}}Z and {{$.defineVariable.endDate}}T{{$.trigger.formData.endTime}}Z has begun. You will be notified once all failed workflows have been retried.",
+					"context": {},
+					"recipientEmailList.$": "$.getIdentity.attributes.email",
+					"subject": "Started retrying failed workflows"
+				},
+				"description": "Only notify the form submitter after the processing starts, just in case the request to start processing fails.",
+				"displayName": "Notify Form Submitter",
+				"nextStep": "End Step - Success",
+				"type": "action",
+				"versionNumber": 2
+			}
+		}
+	},
+	"trigger": {
+		"type": "EVENT",
+		"attributes": {
+			"description": "Listen for the Retry Failed Workflows form",
+			"filter.$": "$[?(@.formDefinitionId == '77b0f669-d299-4119-ac10-0ab807b8f4ef')]",
+			"formDefinitionId": "77b0f669-d299-4119-ac10-0ab807b8f4ef",
+			"id": "sp:form-submitted"
+		}
+	}
+}

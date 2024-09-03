@@ -21,7 +21,7 @@
 			"Compare Timestamps 1": {
 				"choiceList": [
 					{
-						"comparator": "TimestampGreaterThan",
+						"comparator": "TimestampGreaterThanEquals",
 						"nextStep": "HTTP Request 4",
 						"variableA.$": "$.hTTPRequest.body[100].startTime",
 						"variableB.$": "$.trigger.start"
@@ -41,10 +41,10 @@
 				"attributes": {
 					"authenticationType": "OAuth",
 					"method": "get",
-					"oAuthClientId": "535f24d1236f4da1a663410e6cc8cee7",
+					"oAuthClientId": "",
 					"oAuthClientSecret": "",
-					"oAuthTokenUrl": "https://devrel.api.identitynow.com/oauth/token",
-					"url": "https://devrel.api.identitynow.com/v3/workflows/{{$.trigger.workflowId}}/executions?filters=status%20eq%20\"Failed\"%20and%20start_time%20lt%20\"{{$.trigger.end}}\""
+					"oAuthTokenUrl": "https://tenant.api.identitynow.com/oauth/token",
+					"url": "https://tenant.api.identitynow.com/v3/workflows/{{$.trigger.workflowId}}/executions?filters=status%20eq%20\"Failed\"%20and%20start_time%20le%20\"{{$.trigger.end}}\""
 				},
 				"description": "Get all failed executions with a start time that is less than the end date.",
 				"displayName": "Get Failed Executions",
@@ -63,11 +63,11 @@
 						"workflowId": "{{$.trigger.workflowId}}"
 					},
 					"method": "post",
-					"oAuthClientId": "128f6d07-8b68-468c-be14-876648c2c12d",
+					"oAuthClientId": "",
 					"oAuthClientSecret": "",
-					"oAuthTokenUrl": "https://devrel.api.identitynow.com/oauth/token",
+					"oAuthTokenUrl": "https://tenant.api.identitynow.com/oauth/token",
 					"requestContentType": "json",
-					"url": "https://devrel.api.identitynow.com/beta/workflows/execute/external/ba067050-3a26-4bda-995d-55717da4ebeb"
+					"url": "https://tenant.api.identitynow.com/beta/workflows/execute/external/ba067050-3a26-4bda-995d-55717da4ebeb"
 				},
 				"description": "Invoke this workflow again with a modified end date that the same date as the last item processed in this invocation. This ensures the next iteration of this workflow will not process the same items again.",
 				"displayName": "Process next 100",
@@ -85,14 +85,14 @@
 						"Compare Timestamps": {
 							"choiceList": [
 								{
-									"comparator": "TimestampGreaterThan",
+									"comparator": "TimestampGreaterThanEquals",
 									"nextStep": "HTTP Request 2",
 									"variableA.$": "$.loop.loopInput.startTime",
 									"variableB.$": "$.loop.context.start"
 								}
 							],
 							"defaultStep": "End Step - Success",
-							"description": "Make sure the execution's start date is after the start time provided in the trigger input. We don't want to retry failed workflows that are outside of the start/end time provided.",
+							"description": "Make sure the execution's start date is on or after the start time provided in the trigger input. We don't want to retry failed workflows that are outside of the start/end time provided.",
 							"displayName": "Is execution after start date",
 							"type": "choice"
 						},
@@ -110,11 +110,11 @@
 								"authenticationType": "OAuth",
 								"jsonRequestBody.$": "$.hTTPRequest2.body[?(@.type == \"WorkflowExecutionStarted\")].attributes",
 								"method": "post",
-								"oAuthClientId": "535f24d1236f4da1a663410e6cc8cee7",
+								"oAuthClientId": "",
 								"oAuthClientSecret": "",
-								"oAuthTokenUrl": "https://devrel.api.identitynow.com/oauth/token",
+								"oAuthTokenUrl": "https://tenant.api.identitynow.com/oauth/token",
 								"requestContentType": "json",
-								"url": "https://devrel.api.identitynow.com/v3/workflows/{{$.loop.context.workflowId}}/test"
+								"url": "https://tenant.api.identitynow.com/v3/workflows/{{$.loop.context.workflowId}}/test"
 							},
 							"description": "Retry the failed workflow execution by executing the workflow test endpoint and providing the original input to the trigger.",
 							"displayName": "Retry Failed Workflow",
@@ -127,10 +127,10 @@
 							"attributes": {
 								"authenticationType": "OAuth",
 								"method": "get",
-								"oAuthClientId": "535f24d1236f4da1a663410e6cc8cee7",
+								"oAuthClientId": "",
 								"oAuthClientSecret": "",
-								"oAuthTokenUrl": "https://devrel.api.identitynow.com/oauth/token",
-								"url": "https://devrel.api.identitynow.com/v3/workflow-executions/{{$.loop.loopInput.id}}/history"
+								"oAuthTokenUrl": "https://tenant.api.identitynow.com/oauth/token",
+								"url": "https://tenant.api.identitynow.com/v3/workflow-executions/{{$.loop.loopInput.id}}/history"
 							},
 							"description": "Get the details of the individual execution, which will include the original input provided to the failed execution's trigger.",
 							"displayName": "Get Execution Details",
@@ -167,7 +167,7 @@
 		"attributes": {
 			"clientId": "128f6d07-8b68-468c-be14-876648c2c12d",
 			"description": "This trigger requires a workflowId, start, end, and email.",
-			"url": "https://devrel.api.identitynow.com/beta/workflows/execute/external/ba067050-3a26-4bda-995d-55717da4ebeb"
+			"url": "https://tenant.api.identitynow.com/beta/workflows/execute/external/ba067050-3a26-4bda-995d-55717da4ebeb"
 		}
 	}
 }

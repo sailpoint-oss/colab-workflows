@@ -18,7 +18,7 @@
             "elementType": "SECTION",
             "config": {
                 "alignment": "LEFT",
-                "description": "Use this form to start a workflow that will retry failed workflows after the specified date.",
+                "description": "Use this form to start a workflow that will retry failed workflows on or after the specified date.",
                 "formElements": [
                     {
                         "config": {
@@ -49,7 +49,7 @@
                         "config": {
                             "default": "",
                             "description": "",
-                            "helpText": "Retry all Workflow executions that have a start date after this date and have a \"Failed\" status.",
+                            "helpText": "Retry all Workflow executions that have a start date on or after this date and have a \"Failed\" status.",
                             "label": "Start Date",
                             "placeholder": "",
                             "required": true
@@ -70,7 +70,7 @@
                         "config": {
                             "default": "",
                             "description": "",
-                            "helpText": "Retry all Workflow executions that have a start time after this time and have a \"Failed\" status. You must use the following format: hh:mm:ss.",
+                            "helpText": "Retry all Workflow executions that have a start time on or after this time and have a \"Failed\" status. You must use the following format: hh:mm:ss.",
                             "label": "Start Time",
                             "placeholder": "13:16:24",
                             "required": true
@@ -95,7 +95,7 @@
                         "config": {
                             "default": "",
                             "description": "",
-                            "helpText": "Retry all Workflow executions that have a start date before this date and have a \"Failed\" status.",
+                            "helpText": "Retry all Workflow executions that have a start date on or before this date and have a \"Failed\" status.",
                             "label": "End Date",
                             "placeholder": "",
                             "required": true
@@ -116,7 +116,7 @@
                         "config": {
                             "default": "",
                             "description": "",
-                            "helpText": "Retry all Workflow executions that have a start time before this time and have a \"Failed\" status. You must use the following format: hh:mm:ss.",
+                            "helpText": "Retry all Workflow executions that have a start time on or before this time and have a \"Failed\" status. You must use the following format: hh:mm:ss.",
                             "label": "End Time",
                             "placeholder": "13:16:24",
                             "required": true

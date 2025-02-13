@@ -1,0 +1,150 @@
+{
+	"name": "SoD Dynamic Approver",
+	"description": "This workflow add a dynamic approver if a SoD policy is violated. In this example, the SoD Violation owner is added as approver.",
+	"modified": "2025-02-13T18:24:57.856231497Z",
+	"modifiedBy": {
+		"type": "IDENTITY",
+		"id": "",
+		"name": "maria.lima"
+	},
+	"definition": {
+		"start": "Get Identity",
+		"steps": {
+			"Compare Numbers": {
+				"choiceList": [
+					{
+						"comparator": "NumericGreaterThanEquals",
+						"nextStep": "HTTP Request 4",
+						"variableA.$": "$.hTTPRequest2.body[0].sodViolationContext.violationCheckResult.violatedPolicies.length()",
+						"variableB": 1
+					}
+				],
+				"defaultStep": "HTTP Request",
+				"description": "Check if the current item violates at least one SoD Policy.",
+				"type": "choice"
+			},
+			"End Step — Success": {
+				"type": "success"
+			},
+			"End Step — Success 1": {
+				"type": "success"
+			},
+			"Get Identity": {
+				"actionId": "sp:get-identity",
+				"attributes": {
+					"id.$": "$.trigger.requestedFor.id"
+				},
+				"description": "Search the targeted identity info",
+				"nextStep": "HTTP Request 1",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonRequestBody": {
+						"output": {
+							"id": "",
+							"name": "",
+							"type": ""
+						},
+						"secret": "{{$.trigger._metadata.secret}}"
+					},
+					"method": "post",
+					"oAuthClientId": "",
+					"oAuthCredentialLocation": "oAuthInBody",
+					"oAuthTokenUrl": "https://yourTenantHere.api.identitynow.com/oauth/token",
+					"requestContentType": "json",
+					"url.$": "$.trigger._metadata.callbackURL"
+				},
+				"description": "Responds to the ETS Dynamic Approval callback url informing there is no new approval step. If there was a detected violation, the callback was already responded and this API call will be ignored.",
+				"nextStep": "End Step — Success 1",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 1": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"method": "get",
+					"oAuthClientId": "",
+					"oAuthCredentialLocation": "oAuthInBody",
+					"oAuthTokenUrl": "https://yourTenantHere.api.identitynow.com/oauth/token",
+					"url": "https://yourTenantHere.api.identitynow.com/v3/account-activities/{{$.trigger.accessRequestId}}"
+				},
+				"description": "Get Account Activities based on Access Request ID (present in the ETS Access Request Dynamic Approver)",
+				"nextStep": "HTTP Request 2",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 2": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"method": "get",
+					"oAuthClientId": "",
+					"oAuthCredentialLocation": "oAuthInBody",
+					"oAuthTokenUrl": "https://yourTenantHere.api.identitynow.com/oauth/token",
+					"url": "https://yourTenantHere.api.identitynow.com/v3/access-request-status?filters=accountActivityItemId+eq+%22{{$.hTTPRequest1.body.items[0].id}}%22"
+				},
+				"description": "Get the Access Request Status based on accountActivityItemId. The Access Request Status has the SoD Violation information.",
+				"nextStep": "Compare Numbers",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 3": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"jsonRequestBody": {
+						"output": {
+							"id": "{{$.hTTPRequest4.body.violationOwnerAssignmentConfig.ownerRef.id}}",
+							"name": "{{$.hTTPRequest4.body.violationOwnerAssignmentConfig.ownerRef.name}}",
+							"type": "{{$.hTTPRequest4.body.violationOwnerAssignmentConfig.ownerRef.type}}"
+						},
+						"secret": "{{$.trigger._metadata.secret}}"
+					},
+					"method": "post",
+					"oAuthClientId": "",
+					"oAuthCredentialLocation": "oAuthInBody",
+					"oAuthTokenUrl": "https://yourTenantHere.api.identitynow.com/oauth/token",
+					"requestContentType": "json",
+					"url.$": "$.trigger._metadata.callbackURL"
+				},
+				"description": "If at least one policy is being violated, it's enough to add a new approval step, in this case the SoD Violation Owner",
+				"nextStep": "End Step — Success",
+				"type": "action",
+				"versionNumber": 2
+			},
+			"HTTP Request 4": {
+				"actionId": "sp:http",
+				"attributes": {
+					"authenticationType": "OAuth",
+					"method": "get",
+					"oAuthClientId": "",
+					"oAuthCredentialLocation": "oAuthInBody",
+					"oAuthTokenUrl": "https://yourTenantHere.api.identitynow.com/oauth/token",
+					"requestContentType": "json",
+					"url": "https://yourTenantHere.api.identitynow.com/v3/sod-policies/{{$.hTTPRequest2.body[0].sodViolationContext.violationCheckResult.violatedPolicies[0].id}}"
+				},
+				"description": "Search for info about the SoD Policy violated",
+				"nextStep": "HTTP Request 3",
+				"type": "action",
+				"versionNumber": 2
+			}
+		}
+	},
+	"creator": {
+		"type": "IDENTITY",
+		"id": "",
+		"name": "maria.lima"
+	},
+	"trigger": {
+		"type": "EXTERNAL",
+		"attributes": {
+			"description": "Configure your ETS \"Access Request Dynamic Approver\" here to call this workflow",
+			"url": "https://yourTenantHere.api.identitynow.com"
+		}
+	}
+}

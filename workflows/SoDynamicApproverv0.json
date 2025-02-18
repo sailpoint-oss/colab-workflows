@@ -1,12 +1,6 @@
 {
 	"name": "SoD Dynamic Approver",
-	"description": "This workflow add a dynamic approver if a SoD policy is violated. In this example, the SoD Violation owner is added as approver.",
-	"modified": "2025-02-13T18:24:57.856231497Z",
-	"modifiedBy": {
-		"type": "IDENTITY",
-		"id": "",
-		"name": "maria.lima"
-	},
+	"description": "This workflow adds a dynamic approver if a SoD policy is violated. In this example, the SoD Violation owner is added as approver.",
 	"definition": {
 		"start": "Get Identity",
 		"steps": {
@@ -134,11 +128,6 @@
 				"versionNumber": 2
 			}
 		}
-	},
-	"creator": {
-		"type": "IDENTITY",
-		"id": "",
-		"name": "maria.lima"
 	},
 	"trigger": {
 		"type": "EXTERNAL",

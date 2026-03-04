@@ -3,24 +3,24 @@
     "version": 1,
     "self": {
       "type": "FORM_DEFINITION",
-      "id": "cdddc040-29c2-4872-9775-89317f02f313",
+      "id": "c**********************3",
       "name": "Emergency Termination - User Details Form"
     },
     "object": {
-      "id": "cdddc040-29c2-4872-9775-89317f02f313",
+      "id": "c**********************3",
       "name": "Emergency Termination - User Details Form",
       "description": "Emergency Termination - User Details Form",
       "owner": {
         "type": "IDENTITY",
-        "id": "7a3da0b32bc2498381c81fe2bef4e233",
+        "id": "7*********************3",
         "name": ""
       },
       "usedBy": [],
       "formInput": [
         {
-          "id": "aethAccountId",
+          "id": "accountId",
           "type": "STRING",
-          "label": "aethAccountId",
+          "label": "accountId",
           "description": ""
         },
         {
@@ -61,13 +61,13 @@
                   "default": "",
                   "description": "",
                   "helpText": "",
-                  "label": "AethAccountId",
+                  "label": "AccountId",
                   "placeholder": "",
                   "required": false
                 },
                 "elementType": "TEXT",
                 "id": "1612860697006",
-                "key": "aethAccountId",
+                "key": "accountId",
                 "validations": []
               },
               {
@@ -140,7 +140,7 @@
           "rules": [
             {
               "sourceType": "INPUT",
-              "source": "aethAccountId",
+              "source": "accountId",
               "operator": "NOT_EM",
               "valueType": "STRING",
               "value": ""
@@ -150,7 +150,7 @@
             {
               "effectType": "SET_DEFAULT_VALUE",
               "config": {
-                "defaultValueLabel": "aethAccountId",
+                "defaultValueLabel": "accountId",
                 "element": "1612860697006"
               }
             },
@@ -225,8 +225,8 @@
           }
         }
       ],
-      "created": "2025-07-15T07:14:09.474598777Z",
-      "modified": "2025-08-11T10:56:22.938879099Z"
+      "created": "2023-07-15T07:14:09.474598777Z",
+      "modified": "2023-08-11T10:56:22.938879099Z"
     }
   }
 ]

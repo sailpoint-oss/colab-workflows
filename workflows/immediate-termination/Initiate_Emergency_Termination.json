@@ -1,5 +1,5 @@
 {
-  "id": "0fce4da9-207a-4fbf-8986-f7a5c46040ac",
+  "id": "0******************************c",
   "name": "Initiate_Emergency_Termination",
   "description": "Initiate_Emergency_Termination",
   "definition": {
@@ -82,7 +82,7 @@
             "comparator": "StringDoesNotEquals",
             "nextStep": "Interactive Message 1",
             "variableA.$": "$.getIdentity1.attributes.cloudAuthoritativeSource",
-            "variableB": "fe12c505518c43fab8ac62ba9a180b30"
+            "variableB": "f*******************************0"
           }
         ],
         "defaultStep": "Compare Strings 3",
@@ -107,7 +107,7 @@
       "Get Identity 1": {
         "actionId": "sp:get-identity",
         "attributes": {
-          "id.$": "$.interactiveForm.formData.aethAccountId"
+          "id.$": "$.interactiveForm.formData.accountId"
         },
         "displayName": "Get Selected User's Identity",
         "nextStep": "Compare Strings 4",
@@ -119,14 +119,14 @@
         "attributes": {
           "authenticationType": "OAuth",
           "jsonRequestBody": {
-            "lifecycleStateId": "c0cff962d40d4af9af7214f7107d8c61"
+            "lifecycleStateId": "c**************************1"
           },
           "method": "post",
-          "oAuthClientId": "b00c136d683a42ec8b9d068f56248049",
+          "oAuthClientId": "b*************************9",
           "oAuthCredentialLocation": "oAuthInHeader",
           "oAuthTokenUrl": "https://tenant.api.identitynow.com/oauth/token",
           "requestContentType": "json",
-          "url": "https://tenant.api.identitynow.com/v3/identities/{{$.interactiveForm.formData.aethAccountId}}/set-lifecycle-state"
+          "url": "https://tenant.api.identitynow.com/v3/identities/{{$.interactiveForm.formData.accountId}}/set-lifecycle-state"
         },
         "displayName": "Change user's lifecycle state to terminated",
         "nextStep": "Compare Numbers",
@@ -138,14 +138,14 @@
         "attributes": {
           "authenticationType": "OAuth",
           "jsonRequestBody": {
-            "lifecycleStateId": "876bad8792f547cdb24f5ac3ee4d843d"
+            "lifecycleStateId": "8******************************d"
           },
           "method": "post",
-          "oAuthClientId": "b00c136d683a42ec8b9d068f56248049",
+          "oAuthClientId": "b****************************9",
           "oAuthCredentialLocation": "oAuthInHeader",
           "oAuthTokenUrl": "https://tenant.api.identitynow.com/oauth/token",
           "requestContentType": "json",
-          "url": "https://tenant.api.identitynow.com/v3/identities/{{$.interactiveForm.formData.aethAccountId}}/set-lifecycle-state"
+          "url": "https://tenant.api.identitynow.com/v3/identities/{{$.interactiveForm.formData.accountId}}/set-lifecycle-state"
         },
         "displayName": "Change user's lifecycle state to rescinded",
         "nextStep": "Compare Numbers 1",
@@ -155,7 +155,7 @@
       "Interactive Form": {
         "actionId": "sp:interactive-form",
         "attributes": {
-          "formDefinitionId": "1e9f4a20-814e-45f6-bf0f-1873fd3a486f",
+          "formDefinitionId": "1*******************************f",
           "interactiveProcessId.$": "$.trigger.interactiveProcessId",
           "ownerId.$": "$.trigger.launchedBy.id",
           "title": "Initiate Emergency Termination"
@@ -168,8 +168,8 @@
       "Interactive Form 1": {
         "actionId": "sp:interactive-form",
         "attributes": {
-          "formDefinitionId": "cdddc040-29c2-4872-9775-89317f02f313",
-          "inputForForm_aethAccountId.$": "$.getIdentity1.attributes.aethAccountId",
+          "formDefinitionId": "c*************************3",
+          "inputForForm_accountId.$": "$.getIdentity1.attributes.accountId",
           "inputForForm_displayName.$": "$.getIdentity1.attributes.displayName",
           "inputForForm_email.$": "$.getIdentity1.attributes.email",
           "inputForForm_employeeType.$": "$.getIdentity1.attributes.userType",
@@ -188,7 +188,7 @@
         "attributes": {
           "category": "ERROR",
           "interactiveProcessId.$": "$.trigger.interactiveProcessId",
-          "message": "<p>Hello,<br><br>Immediate termination cannot be processed as this user is already terminated.</p>\n<p>Thank You,<br>myAccess Support</p>",
+          "message": "<p>Hello,<br><br>Immediate termination cannot be processed as this user is already terminated.</p>\n<p>Thank You,<br>Support</p>",
           "ownerId.$": "$.trigger.launchedBy.id",
           "title": "Emergency Termination Failed"
         },
@@ -202,7 +202,7 @@
         "attributes": {
           "category": "ERROR",
           "interactiveProcessId.$": "$.trigger.interactiveProcessId",
-          "message": "<p>Hello,<br><br>Immediate termination cannot be processed as this is a non person account.</p>\n<p>Thank You,<br>myAccess Support</p>",
+          "message": "<p>Hello,<br><br>Immediate termination cannot be processed as this is a non person account.</p>\n<p>Thank You,<br>Support</p>",
           "ownerId.$": "$.trigger.launchedBy.id",
           "title": "Emergency Termination Failed"
         },
@@ -214,7 +214,7 @@
       "Send Email": {
         "actionId": "sp:send-email",
         "attributes": {
-          "body": "<p>Hello Team,<br><br>This is to inform you that {{$.getIdentity1.attributes.displayName}}, has been terminated effective today.</p>\n<p>Thank You,<br>myAccess Support</p>",
+          "body": "<p>Hello Team,<br><br>This is to inform you that {{$.getIdentity1.attributes.displayName}}, has been terminated effective today.</p>\n<p>Thank You,<br>Support</p>",
           "context": {},
           "recipientEmailList": [
             "ujjwaljain@test.com"
@@ -229,7 +229,7 @@
       "Send Email 1": {
         "actionId": "sp:send-email",
         "attributes": {
-          "body": "<p>Hello Team,<br><br>This is to inform you that immediate termination failed for user: {{$.getIdentity1.attributes.displayName}}.</p>\n<p>Thank You,<br>myAccess Support</p>",
+          "body": "<p>Hello Team,<br><br>This is to inform you that immediate termination failed for user: {{$.getIdentity1.attributes.displayName}}.</p>\n<p>Thank You,<br>Support</p>",
           "context": {},
           "recipientEmailList": [
             "ujjwaljain@test.com"
@@ -249,7 +249,7 @@
   "trigger": {
     "type": "EVENT",
     "attributes": {
-      "filter.$": "$[?(@.workflowId == '0fce4da9-207a-4fbf-8986-f7a5c46040ac')]",
+      "filter.$": "$[?(@.workflowId == '0******************************c')]",
       "id": "idn:interactive-process-launched"
     }
   }
